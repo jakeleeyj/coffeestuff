@@ -1,30 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf6f0;
-  --foreground: #1a0a00;
+  --background: #0d0906;
+  --foreground: #f0e6d4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-jakarta);
+  --font-display: var(--font-playfair);
 
-  /* Coffee palette */
-  --color-coffee-950: #1a0a00;
-  --color-coffee-900: #2c1a0e;
-  --color-coffee-800: #4a2c17;
-  --color-coffee-700: #6b3f20;
-  --color-coffee-600: #8b5e3c;
-  --color-coffee-500: #a67c52;
-  --color-coffee-400: #c4a882;
-  --color-coffee-300: #dfd3be;
-  --color-coffee-200: #ece6da;
-  --color-coffee-100: #f5f0e8;
-  --color-cream: #faf6f0;
+  /* Bloom palette */
+  --color-base:           #0d0906;
+  --color-surface:        #1a1109;
+  --color-surface-raised: #231810;
+  --color-border:         #352015;
+  --color-border-subtle:  #251808;
+
+  --color-bloom:          #d4963f;
+  --color-bloom-hover:    #e8a84a;
+  --color-bloom-dim:      #8a5f28;
+  --color-bloom-glow:     rgba(212, 150, 63, 0.12);
+
+  --color-text:           #f0e6d4;
+  --color-text-muted:     #7a6550;
+  --color-text-dim:       #4a3828;
+  --color-cream:          #faf0e0;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background-color: #0d0906;
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(212, 150, 63, 0.07) 0%, transparent 65%);
+  color: #f0e6d4;
+  min-height: 100dvh;
 }
+
+/* Smooth tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #352015; border-radius: 2px; }

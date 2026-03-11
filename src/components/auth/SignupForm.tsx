@@ -35,21 +35,21 @@ export default function SignupForm() {
 
   if (success) {
     return (
-      <div className="bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-3 rounded-lg text-center">
+      <div className="bg-bloom-glow border border-bloom-dim text-bloom text-sm px-4 py-3 rounded-xl text-center">
         Check your email to confirm your account, then sign in.
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-3">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-lg">
+        <div className="bg-red-950/50 border border-red-800/50 text-red-300 text-sm px-3 py-2 rounded-lg">
           {error}
         </div>
       )}
       <div>
-        <label className="block text-sm font-medium text-coffee-800 mb-1">Username</label>
+        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">Username</label>
         <input
           type="text"
           value={username}
@@ -58,34 +58,37 @@ export default function SignupForm() {
           minLength={3}
           pattern="[a-zA-Z0-9_]+"
           title="Letters, numbers and underscores only"
-          className="w-full border border-coffee-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-coffee-500"
+          className="w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom transition-colors"
+          placeholder="yourname"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-coffee-800 mb-1">Email</label>
+        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">Email</label>
         <input
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          className="w-full border border-coffee-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-coffee-500"
+          className="w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom transition-colors"
+          placeholder="you@example.com"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-coffee-800 mb-1">Password</label>
+        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">Password</label>
         <input
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full border border-coffee-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-coffee-500"
+          className="w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text focus:outline-none focus:border-bloom transition-colors"
+          placeholder="••••••••"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-coffee-700 text-cream py-2 rounded-lg text-sm font-medium hover:bg-coffee-800 transition-colors disabled:opacity-50"
+        className="w-full bg-bloom text-base font-semibold py-2.5 rounded-xl text-sm hover:bg-bloom-hover transition-colors disabled:opacity-50 mt-1"
       >
         {loading ? 'Creating account…' : 'Create account'}
       </button>

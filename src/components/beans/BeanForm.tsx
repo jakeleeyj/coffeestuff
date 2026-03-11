@@ -3,6 +3,9 @@
 import { useTransition } from 'react'
 import { addBean } from '@/lib/actions/beans'
 
+const inputCls = "w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom transition-colors"
+const labelCls = "block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide"
+
 export default function BeanForm() {
   const [pending, startTransition] = useTransition()
 
@@ -15,37 +18,20 @@ export default function BeanForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-coffee-800 mb-1">Bean name</label>
-        <input
-          name="name"
-          type="text"
-          required
-          className="w-full border border-coffee-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-coffee-500"
-        />
+        <label className={labelCls}>Bean name</label>
+        <input name="name" type="text" required className={inputCls} placeholder="e.g. Ethiopia Yirgacheffe" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-coffee-800 mb-1">Roaster</label>
-        <input
-          name="roaster"
-          type="text"
-          required
-          className="w-full border border-coffee-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-coffee-500"
-        />
+        <label className={labelCls}>Roaster</label>
+        <input name="roaster" type="text" required className={inputCls} placeholder="e.g. Square Mile" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-coffee-800 mb-1">Origin <span className="text-coffee-400">(optional)</span></label>
-        <input
-          name="origin"
-          type="text"
-          className="w-full border border-coffee-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-coffee-500"
-        />
+        <label className={labelCls}>Origin <span className="text-text-dim normal-case">(optional)</span></label>
+        <input name="origin" type="text" className={inputCls} placeholder="e.g. Ethiopia" />
       </div>
       <div>
-        <label className="block text-sm font-medium text-coffee-800 mb-1">Roast level <span className="text-coffee-400">(optional)</span></label>
-        <select
-          name="roast_level"
-          className="w-full border border-coffee-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-coffee-500"
-        >
+        <label className={labelCls}>Roast level <span className="text-text-dim normal-case">(optional)</span></label>
+        <select name="roast_level" className={inputCls}>
           <option value="">Select…</option>
           <option value="light">Light</option>
           <option value="medium">Medium</option>
@@ -55,7 +41,7 @@ export default function BeanForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full bg-coffee-700 text-cream py-2 rounded-lg text-sm font-medium hover:bg-coffee-800 transition-colors disabled:opacity-50"
+        className="w-full bg-bloom text-base font-semibold py-2.5 rounded-xl text-sm hover:bg-bloom-hover transition-colors disabled:opacity-50"
       >
         {pending ? 'Adding…' : 'Add bean'}
       </button>

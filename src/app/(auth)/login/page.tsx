@@ -3,16 +3,20 @@ import LoginForm from '@/components/auth/LoginForm'
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-4">
+    <div className="min-h-dvh bg-base flex flex-col items-center justify-center px-5"
+      style={{ background: 'radial-gradient(ellipse at 50% 30%, rgba(212,150,63,0.1) 0%, #0d0906 60%)' }}>
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-semibold text-coffee-900">☕ Sirius</h1>
-          <p className="text-coffee-600 mt-2 text-sm">Sign in to your account</p>
+        <div className="text-center mb-10">
+          <h1 className="font-display text-4xl text-cream mb-2">Bloom</h1>
+          <p className="text-text-muted text-sm">Your coffee community</p>
         </div>
-        <LoginForm />
-        <p className="text-center text-sm text-coffee-600 mt-6">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="text-coffee-800 font-medium hover:underline">
+        <div className="bg-surface border border-border rounded-2xl p-6">
+          <h2 className="text-text font-semibold mb-5">Sign in</h2>
+          <LoginForm />
+        </div>
+        <p className="text-center text-sm text-text-muted mt-5">
+          No account?{' '}
+          <Link href="/signup" className="text-bloom hover:text-bloom-hover transition-colors">
             Sign up
           </Link>
         </p>

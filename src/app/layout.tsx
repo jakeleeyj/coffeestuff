@@ -1,15 +1,22 @@
 import type { Metadata } from 'next'
-import { Geist } from 'next/font/google'
+import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const playfair = Playfair_Display({
+  variable: '--font-playfair',
   subsets: ['latin'],
+  display: 'swap',
+})
+
+const jakarta = Plus_Jakarta_Sans({
+  variable: '--font-jakarta',
+  subsets: ['latin'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
-  title: 'Sirius — Coffee Community',
+  title: 'Bloom — Coffee Community',
   description: 'Share your coffee moments',
 }
 
@@ -20,9 +27,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased bg-cream min-h-screen`}>
+      <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
+        <main className="pb-24">{children}</main>
         <Navbar />
-        <main>{children}</main>
       </body>
     </html>
   )

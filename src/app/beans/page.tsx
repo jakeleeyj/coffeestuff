@@ -10,23 +10,29 @@ export default async function BeansPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div className="max-w-lg mx-auto px-4 pt-8">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-semibold text-coffee-900">Bean Library</h1>
+        <h1 className="font-display text-2xl text-text">Bean Library</h1>
         <Link
           href="/beans/new"
-          className="bg-coffee-700 text-cream text-sm px-3 py-1.5 rounded-full hover:bg-coffee-800 transition-colors"
+          className="bg-bloom text-base text-sm font-semibold px-4 py-2 rounded-full hover:bg-bloom-hover transition-colors"
         >
-          + Add bean
+          + Add
         </Link>
       </div>
 
       {beans && beans.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="flex flex-col gap-3">
           {beans.map(bean => <BeanCard key={bean.id} bean={bean} />)}
         </div>
       ) : (
-        <p className="text-coffee-500 text-sm">No beans yet. Be the first to add one!</p>
+        <div className="text-center py-16">
+          <p className="text-4xl mb-3">☕</p>
+          <p className="text-text-muted text-sm">No beans yet.</p>
+          <Link href="/beans/new" className="text-bloom text-sm mt-1 inline-block hover:text-bloom-hover transition-colors">
+            Be the first to add one →
+          </Link>
+        </div>
       )}
     </div>
   )

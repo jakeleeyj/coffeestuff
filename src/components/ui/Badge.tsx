@@ -1,13 +1,13 @@
-const roastColors: Record<string, string> = {
-  light: 'bg-amber-100 text-amber-800',
-  medium: 'bg-coffee-300 text-coffee-900',
-  dark: 'bg-coffee-800 text-cream',
+const variants: Record<string, string> = {
+  light:  'bg-amber-900/30 text-amber-300 border border-amber-800/40',
+  medium: 'bg-bloom-glow text-bloom border border-bloom-dim',
+  dark:   'bg-surface-raised text-text-muted border border-border',
 }
 
 export default function Badge({ label }: { label: string }) {
-  const colorClass = roastColors[label] ?? 'bg-coffee-200 text-coffee-800'
+  const cls = variants[label] ?? 'bg-surface-raised text-text-muted border border-border'
   return (
-    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium capitalize ${colorClass}`}>
+    <span className={`inline-block px-2 py-0.5 rounded-full text-[11px] font-medium capitalize ${cls}`}>
       {label}
     </span>
   )

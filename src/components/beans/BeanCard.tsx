@@ -10,16 +10,18 @@ type Bean = {
 
 export default function BeanCard({ bean }: { bean: Bean }) {
   return (
-    <div className="bg-white border border-coffee-200 rounded-xl p-4 flex flex-col gap-2">
+    <div className="bg-surface border border-border rounded-2xl p-4 flex flex-col gap-3 hover:border-bloom-dim transition-colors">
       <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="font-medium text-coffee-900">{bean.name}</p>
-          <p className="text-sm text-coffee-600">{bean.roaster}</p>
+        <div className="min-w-0">
+          <p className="font-semibold text-text truncate">{bean.name}</p>
+          <p className="text-sm text-text-muted mt-0.5">{bean.roaster}</p>
         </div>
         {bean.roast_level && <Badge label={bean.roast_level} />}
       </div>
       {bean.origin && (
-        <p className="text-xs text-coffee-500">📍 {bean.origin}</p>
+        <p className="text-xs text-text-dim flex items-center gap-1">
+          <span>📍</span> {bean.origin}
+        </p>
       )}
     </div>
   )
