@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
@@ -36,6 +36,7 @@ function IconProfile({ active }: { active: boolean }) {
 
 export default function Navbar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const supabase = createClient()
 
@@ -50,45 +51,104 @@ export default function Navbar() {
   if (AUTH_ROUTES.includes(pathname)) return null
 
   const username = user?.user_metadata?.username ?? user?.email?.split('@')[0] ?? ''
+  const initials = username.slice(0, 2).toUpperCase()
+
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
 
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-50"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-    >
-      <div
-        className="mx-auto max-w-lg border-t border-border-subtle"
+    <>
+      {/* ── Desktop top nav ── */}
+      <nav
+        className="hidden md:flex fixed top-0 left-0 right-0 z-50 border-b border-border-subtle"
         style={{ background: 'rgba(13, 9, 6, 0.88)', backdropFilter: 'blur(20px)' }}
+      >
+        <div className="max-w-5xl mx-auto w-full px-6 h-14 flex items-center justify-between">
+          {/* Logo + links */}
+          <div className="flex items-center gap-8">
+            <Link href="/feed" className="font-display text-xl text-cream tracking-tight">
+              Bloom
+            </Link>
+            <div className="flex items-center gap-6">
+              <Link
+                href="/feed"
+                className={`text-sm transition-colors ${pathname === '/feed' ? 'text-bloom font-medium' : 'text-text-muted hover:text-text'}`}
+              >
+                Feed
+              </Link>
+              <Link
+                href="/beans"
+                className={`text-sm transition-colors ${pathname.startsWith('/beans') ? 'text-bloom font-medium' : 'text-text-muted hover:text-text'}`}
+              >
+                Beans
+              </Link>
+            </div>
+          </div>
+
+          {/* Auth */}
+          <div className="flex items-center gap-4">
+            {user ? (
+              <>
+                <Link
+                  href="/posts/new"
+                  className="bg-bloom text-base text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-bloom-hover transition-colors"
+                >
+                  + New Post
+                </Link>
+                <Link
+                  href={`/profile/${username}`}
+                  className="w-8 h-8 rounded-full bg-surface-raised border border-border flex items-center justify-center text-xs font-semibold text-bloom hover:border-bloom-dim transition-colors"
+                >
+                  {initials}
+                </Link>
+                <button
+                  onClick={handleSignOut}
+                  className="text-sm text-text-muted hover:text-text transition-colors"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm text-text-muted hover:text-text transition-colors"
+              >
+                Sign in
+              </Link>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* ── Mobile bottom tab bar ── */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border-subtle"
+        style={{ background: 'rgba(13, 9, 6, 0.88)', backdropFilter: 'blur(20px)', paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex items-center justify-around px-2 h-16">
 
-          {/* Feed */}
           <Link href="/feed" className="flex flex-col items-center gap-1 min-w-[60px] py-1">
             <span className={pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}>
               <IconFeed active={pathname === '/feed'} />
             </span>
-            <span className={`text-[10px] font-medium ${pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}`}>
-              Feed
-            </span>
+            <span className={`text-[10px] font-medium ${pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}`}>Feed</span>
           </Link>
 
-          {/* Beans */}
           <Link href="/beans" className="flex flex-col items-center gap-1 min-w-[60px] py-1">
             <span className={pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}>
               <IconBeans active={pathname.startsWith('/beans')} />
             </span>
-            <span className={`text-[10px] font-medium ${pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}`}>
-              Beans
-            </span>
+            <span className={`text-[10px] font-medium ${pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}`}>Beans</span>
           </Link>
 
-          {/* New Post CTA */}
-          <Link
-            href="/posts/new"
-            className="flex flex-col items-center gap-1 min-w-[60px] py-1 -mt-5"
-          >
-            <span className="w-12 h-12 rounded-full bg-bloom flex items-center justify-center shadow-lg"
-              style={{ boxShadow: '0 0 20px rgba(212, 150, 63, 0.4)' }}>
+          <Link href="/posts/new" className="flex flex-col items-center gap-1 min-w-[60px] py-1 -mt-5">
+            <span
+              className="w-12 h-12 rounded-full bg-bloom flex items-center justify-center"
+              style={{ boxShadow: '0 0 20px rgba(212, 150, 63, 0.4)' }}
+            >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d0906" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M12 5v14M5 12h14" />
               </svg>
@@ -96,7 +156,6 @@ export default function Navbar() {
             <span className="text-[10px] font-medium text-text-muted">Post</span>
           </Link>
 
-          {/* Profile */}
           <Link
             href={user ? `/profile/${username}` : '/login'}
             className="flex flex-col items-center gap-1 min-w-[60px] py-1"
@@ -110,7 +169,7 @@ export default function Navbar() {
           </Link>
 
         </div>
-      </div>
-    </nav>
+      </nav>
+    </>
   )
 }

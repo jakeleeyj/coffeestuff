@@ -10,7 +10,7 @@ export default async function BeansPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-8">
+    <div className="max-w-lg md:max-w-4xl mx-auto px-4 pt-8">
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-2xl text-text">Bean Library</h1>
         <Link
@@ -22,7 +22,7 @@ export default async function BeansPage() {
       </div>
 
       {beans && beans.length > 0 ? (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {beans.map(bean => <BeanCard key={bean.id} bean={bean} />)}
         </div>
       ) : (

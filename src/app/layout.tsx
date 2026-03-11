@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
-        <main className="pb-24">{children}</main>
+        <main className="pb-24 md:pb-0 md:pt-14">{children}</main>
         <Navbar />
       </body>
     </html>
