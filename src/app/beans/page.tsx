@@ -4,10 +4,11 @@ import BeanCard from '@/components/beans/BeanCard'
 
 export default async function BeansPage() {
   const supabase = await createClient()
-  const { data: beans } = await supabase
-    .from('beans')
-    .select('id, name, roaster, origin, roast_level')
-    .order('created_at', { ascending: false })
+
+  const [{ data: beans }, { data: { user } }] = await Promise.all([
+    supabase.from('beans').select('id, name, roaster, origin, roast_level, added_by').order('created_at', { ascending: false }),
+    supabase.auth.getUser(),
+  ])
 
   return (
     <div className="max-w-lg md:max-w-4xl mx-auto px-4 pt-8">
@@ -23,7 +24,7 @@ export default async function BeansPage() {
 
       {beans && beans.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {beans.map(bean => <BeanCard key={bean.id} bean={bean} />)}
+          {beans.map(bean => <BeanCard key={bean.id} bean={bean} userId={user?.id} />)}
         </div>
       ) : (
         <div className="text-center py-16">
