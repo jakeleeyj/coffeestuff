@@ -14,7 +14,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
     .from('posts')
     .select(`
       id, image_url, caption, brew_method, recipe, created_at, user_id,
-      profiles!posts_user_id_fkey(id, username, avatar_url),
+      profiles(id, username, avatar_url),
       post_beans(beans(id, name, roast_level))
     `)
     .eq('id', id)

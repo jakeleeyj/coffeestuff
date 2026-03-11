@@ -9,7 +9,7 @@ export default async function FeedPage() {
     .from('posts')
     .select(`
       id, image_url, caption, brew_method, created_at,
-      profiles!posts_user_id_fkey(id, username, avatar_url),
+      profiles(id, username, avatar_url),
       post_beans(beans(id, name, roast_level))
     `)
     .order('created_at', { ascending: false })
