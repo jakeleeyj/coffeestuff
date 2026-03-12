@@ -23,6 +23,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
 }
 
 export const metadata: Metadata = {
@@ -49,7 +50,7 @@ export default function RootLayout({
       </head>
       <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
         <ToastProvider>
-          <main className="pb-24 md:pb-0 md:pt-14 page-in">{children}</main>
+          <main className="pb-28 md:pb-0 md:pt-14 page-in" style={{ paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}>{children}</main>
           <Navbar />
         </ToastProvider>
         <ServiceWorker />
