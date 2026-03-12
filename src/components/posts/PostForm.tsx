@@ -4,48 +4,12 @@ import { useState, useRef, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { createPost } from '@/lib/actions/posts'
 import BeanTagSelector from './BeanTagSelector'
+import ImageCropper from './ImageCropper'
 
 type Bean = { id: string; name: string; roast_level: string | null }
 
 const inputCls = "w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom transition-colors"
 const labelCls = "block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide"
-
-const MAX_DIMENSION = 1920
-const JPEG_QUALITY = 0.85
-
-async function compressImage(file: File): Promise<File> {
-  return new Promise((resolve) => {
-    const img = new Image()
-    const url = URL.createObjectURL(file)
-    img.onload = () => {
-      URL.revokeObjectURL(url)
-      let { width, height } = img
-
-      if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
-        if (width > height) {
-          height = Math.round(height * MAX_DIMENSION / width)
-          width = MAX_DIMENSION
-        } else {
-          width = Math.round(width * MAX_DIMENSION / height)
-          height = MAX_DIMENSION
-        }
-      }
-
-      const canvas = document.createElement('canvas')
-      canvas.width = width
-      canvas.height = height
-      canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
-
-      canvas.toBlob(
-        blob => resolve(blob ? new File([blob], 'photo.jpg', { type: 'image/jpeg' }) : file),
-        'image/jpeg',
-        JPEG_QUALITY
-      )
-    }
-    img.onerror = () => { URL.revokeObjectURL(url); resolve(file) }
-    img.src = url
-  })
-}
 
 function formatBytes(bytes: number) {
   return bytes < 1024 * 1024
@@ -55,46 +19,67 @@ function formatBytes(bytes: number) {
 
 export default function PostForm({ beans }: { beans: Bean[] }) {
   const router = useRouter()
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [compressedFile, setCompressedFile] = useState<File | null>(null)
-  const [compressing, setCompressing] = useState(false)
-  const [fileSize, setFileSize] = useState<string | null>(null)
+  const [rawImageUrl, setRawImageUrl] = useState<string | null>(null)
+  const [croppedFile, setCroppedFile] = useState<File | null>(null)
+  const [croppedPreview, setCroppedPreview] = useState<string | null>(null)
   const [selectedBeans, setSelectedBeans] = useState<string[]>([])
   const [pending, startTransition] = useTransition()
   const [success, setSuccess] = useState(false)
+  const [dragIdx, setDragIdx] = useState<number | null>(null)
   const formRef = useRef<HTMLFormElement>(null)
 
-  async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (!file) return
-
-    setCompressing(true)
-    setPreviewUrl(null)
-    setCompressedFile(null)
-
-    const compressed = await compressImage(file)
-    const preview = URL.createObjectURL(compressed)
-
-    setCompressedFile(compressed)
-    setPreviewUrl(preview)
-    setFileSize(formatBytes(compressed.size))
-    setCompressing(false)
+    setRawImageUrl(URL.createObjectURL(file))
+    setCroppedFile(null)
+    setCroppedPreview(null)
   }
 
-  function handleClear() {
-    setPreviewUrl(null)
-    setCompressedFile(null)
-    setFileSize(null)
-    // Reset file input
+  function handleCrop(file: File) {
+    setCroppedFile(file)
+    setCroppedPreview(URL.createObjectURL(file))
+    setRawImageUrl(null)
+  }
+
+  function handleCropCancel() {
+    setRawImageUrl(null)
     const input = formRef.current?.querySelector('input[type="file"]') as HTMLInputElement
     if (input) input.value = ''
   }
 
+  function handleClear() {
+    setCroppedFile(null)
+    setCroppedPreview(null)
+    setRawImageUrl(null)
+    const input = formRef.current?.querySelector('input[type="file"]') as HTMLInputElement
+    if (input) input.value = ''
+  }
+
+  // Bean tag drag reorder
+  function handleDragStart(idx: number) {
+    setDragIdx(idx)
+  }
+
+  function handleDragOver(e: React.DragEvent, idx: number) {
+    e.preventDefault()
+    if (dragIdx === null || dragIdx === idx) return
+    const reordered = [...selectedBeans]
+    const [moved] = reordered.splice(dragIdx, 1)
+    reordered.splice(idx, 0, moved)
+    setSelectedBeans(reordered)
+    setDragIdx(idx)
+  }
+
+  function handleDragEnd() {
+    setDragIdx(null)
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!compressedFile) return
+    if (!croppedFile) return
     const formData = new FormData(e.currentTarget)
-    formData.set('image', compressedFile, 'photo.jpg')
+    formData.set('image', croppedFile, 'photo.jpg')
     selectedBeans.forEach(id => formData.append('bean_ids', id))
     startTransition(async () => {
       await createPost(formData)
@@ -117,20 +102,28 @@ export default function PostForm({ beans }: { beans: Bean[] }) {
     )
   }
 
+  // Show cropper if raw image selected but not yet cropped
+  if (rawImageUrl) {
+    return (
+      <div className="space-y-2">
+        <label className={labelCls}>Crop your photo</label>
+        <ImageCropper imageUrl={rawImageUrl} onCrop={handleCrop} onCancel={handleCropCancel} />
+      </div>
+    )
+  }
+
+  const beanMap = Object.fromEntries(beans.map(b => [b.id, b]))
+
   return (
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
 
       {/* Image */}
       <div>
         <label className={labelCls}>Photo</label>
-        {compressing ? (
-          <div className="flex flex-col items-center justify-center aspect-square rounded-2xl border border-border bg-surface">
-            <div className="w-8 h-8 rounded-full border-2 border-bloom border-t-transparent animate-spin mb-3" />
-            <span className="text-sm text-text-muted">Compressing…</span>
-          </div>
-        ) : previewUrl ? (
+        {croppedPreview ? (
           <div className="relative aspect-square rounded-2xl overflow-hidden bg-surface">
-            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={croppedPreview} alt="Preview" className="w-full h-full object-cover" />
             <button
               type="button"
               onClick={handleClear}
@@ -138,9 +131,20 @@ export default function PostForm({ beans }: { beans: Bean[] }) {
             >
               ×
             </button>
-            {fileSize && (
+            <button
+              type="button"
+              onClick={() => {
+                // Re-enter crop mode — need original image
+                // For simplicity, clear and re-select
+                handleClear()
+              }}
+              className="absolute top-2 left-2 bg-base/80 text-text-muted hover:text-text text-xs px-2.5 py-1 rounded-full"
+            >
+              Re-crop
+            </button>
+            {croppedFile && (
               <div className="absolute bottom-2 right-2 bg-base/70 text-text-muted text-[10px] px-2 py-0.5 rounded-full">
-                {fileSize}
+                {formatBytes(croppedFile.size)}
               </div>
             )}
           </div>
@@ -148,7 +152,7 @@ export default function PostForm({ beans }: { beans: Bean[] }) {
           <label className="flex flex-col items-center justify-center aspect-square rounded-2xl border-2 border-dashed border-border bg-surface cursor-pointer hover:border-bloom-dim transition-colors">
             <span className="text-4xl mb-3">📷</span>
             <span className="text-sm text-text-muted">Tap to add photo</span>
-            <span className="text-xs text-text-dim mt-1">Auto-compressed · any size</span>
+            <span className="text-xs text-text-dim mt-1">You&apos;ll crop it next</span>
             <input
               name="image"
               type="file"
@@ -204,12 +208,39 @@ export default function PostForm({ beans }: { beans: Bean[] }) {
         <div>
           <label className={labelCls}>Beans <span className="text-text-dim normal-case">(optional)</span></label>
           <BeanTagSelector beans={beans} selected={selectedBeans} onChange={setSelectedBeans} />
+
+          {/* Draggable selected beans for reordering */}
+          {selectedBeans.length > 1 && (
+            <div className="mt-2">
+              <p className="text-[10px] text-text-dim mb-1.5">Drag to reorder</p>
+              <div className="flex flex-wrap gap-1.5">
+                {selectedBeans.map((id, idx) => {
+                  const bean = beanMap[id]
+                  if (!bean) return null
+                  return (
+                    <div
+                      key={id}
+                      draggable
+                      onDragStart={() => handleDragStart(idx)}
+                      onDragOver={(e) => handleDragOver(e, idx)}
+                      onDragEnd={handleDragEnd}
+                      className={`px-2.5 py-1 rounded-full text-xs font-medium bg-bloom/20 text-bloom border border-bloom/30 cursor-grab active:cursor-grabbing select-none transition-opacity ${
+                        dragIdx === idx ? 'opacity-50' : ''
+                      }`}
+                    >
+                      {bean.name}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       <button
         type="submit"
-        disabled={pending || !compressedFile || compressing}
+        disabled={pending || !croppedFile}
         className="w-full bg-bloom text-base font-semibold py-2.5 rounded-xl text-sm hover:bg-bloom-hover transition-colors disabled:opacity-50"
       >
         {pending ? 'Sharing…' : 'Share'}
