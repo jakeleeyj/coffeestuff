@@ -29,7 +29,7 @@ export default function BeanCard({ bean, userId, addedByUsername, avgRating = 0,
     <div className="glass rounded-2xl p-4 flex flex-col gap-3 hover:border-bloom-dim/20 transition-all">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="font-semibold text-text truncate">{bean.name}</p>
+          <Link href={`/beans/${bean.id}`} className="font-semibold text-text truncate hover:text-bloom transition-colors block">{bean.name}</Link>
           {bean.roaster && <p className="text-sm text-text-muted mt-0.5">{bean.roaster}</p>}
         </div>
         {bean.roast_level && <Badge label={bean.roast_level} />}
