@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import ServiceWorker from '@/components/ServiceWorker'
 import { ToastProvider } from '@/components/ui/Toast'
 
 const playfair = Playfair_Display({
@@ -26,6 +27,12 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: 'Bloom — Coffee Community',
   description: 'Share your coffee moments',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Bloom',
+  },
 }
 
 export default function RootLayout({
@@ -35,11 +42,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="theme-color" content="#0a0704" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+      </head>
       <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
         <ToastProvider>
           <main className="pb-24 md:pb-0 md:pt-14 page-in">{children}</main>
           <Navbar />
         </ToastProvider>
+        <ServiceWorker />
       </body>
     </html>
   )
