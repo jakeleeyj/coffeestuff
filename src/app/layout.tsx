@@ -3,6 +3,7 @@ import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
 import ServiceWorker from '@/components/ServiceWorker'
+import PushPrompt from '@/components/PushPrompt'
 import { ToastProvider } from '@/components/ui/Toast'
 
 const playfair = Playfair_Display({
@@ -52,6 +53,7 @@ export default function RootLayout({
           <Navbar />
         </ToastProvider>
         <ServiceWorker />
+        <PushPrompt />
       </body>
     </html>
   )

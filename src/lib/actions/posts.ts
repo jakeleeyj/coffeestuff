@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { sendPushToAll } from '@/lib/push'
 
 export async function createPost(formData: FormData) {
   const supabase = await createClient()
@@ -51,6 +52,16 @@ export async function createPost(formData: FormData) {
   }
 
   revalidatePath('/feed')
+
+  // Send push notification to all other users (fire-and-forget)
+  const { data: profile } = await supabase.from('profiles').select('username').eq('id', user.id).single()
+  const username = profile?.username ?? 'Someone'
+  const caption = (formData.get('caption') as string) || 'a new brew'
+  sendPushToAll(
+    `${username} shared a brew`,
+    caption.length > 80 ? caption.slice(0, 80) + '…' : caption,
+    user.id,
+  ).catch(() => {}) // don't fail the post if push fails
 }
 
 export async function deletePost(postId: string) {

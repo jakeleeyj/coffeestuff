@@ -28,3 +28,38 @@ self.addEventListener('fetch', (event) => {
     )
   }
 })
+
+// Push notifications
+self.addEventListener('push', (event) => {
+  if (!event.data) return
+
+  const data = event.data.json()
+  const options = {
+    body: data.body || '',
+    icon: '/icons/icon-192.png',
+    badge: '/icons/icon-192.png',
+    vibrate: [100, 50, 100],
+    data: { url: '/feed' },
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Bloom', options)
+  )
+})
+
+// Open app when notification is clicked
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close()
+  const url = event.notification.data?.url || '/feed'
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url.includes('/feed') && 'focus' in client) {
+          return client.focus()
+        }
+      }
+      return clients.openWindow(url)
+    })
+  )
+})
