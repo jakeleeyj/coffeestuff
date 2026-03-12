@@ -83,5 +83,4 @@ export async function deletePost(postId: string) {
   }
 
   revalidatePath('/feed')
-  redirect('/feed')
 }

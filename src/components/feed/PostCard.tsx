@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
-import { deletePost } from '@/lib/actions/posts'
+import DeletePostButton from '@/components/feed/DeletePostButton'
 import type { PostWithRelations } from '@/lib/types'
 
 function timeAgo(dateStr: string) {
@@ -17,7 +17,6 @@ export default function PostCard({ post, userId }: { post: PostWithRelations; us
   const username = post.profiles?.username ?? 'unknown'
   const beans = post.post_beans.map(pb => pb.beans).filter(Boolean)
   const isOwner = !!userId && userId === post.user_id
-  const deletePostById = deletePost.bind(null, post.id)
 
   return (
     <article className="bg-surface border border-border rounded-2xl overflow-hidden hover:border-bloom-dim transition-colors">
@@ -40,13 +39,7 @@ export default function PostCard({ post, userId }: { post: PostWithRelations; us
             <span className="text-sm font-medium text-text">{username}</span>
           </Link>
           <div className="flex items-center gap-3">
-            {isOwner && (
-              <form action={deletePostById}>
-                <button type="submit" className="text-xs text-text-dim hover:text-red-400 transition-colors">
-                  Delete
-                </button>
-              </form>
-            )}
+            {isOwner && <DeletePostButton postId={post.id} />}
             <span className="text-xs text-text-dim">{timeAgo(post.created_at)}</span>
           </div>
         </div>
