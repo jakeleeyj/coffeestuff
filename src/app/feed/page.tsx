@@ -1,14 +1,8 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import FeedGrid from '@/components/feed/FeedGrid'
+import FeedGreeting from '@/components/feed/FeedGreeting'
 import { loadFeedPage } from '@/lib/actions/feed'
-
-function getGreeting() {
-  const hour = new Date().getHours()
-  if (hour < 12) return 'Good morning'
-  if (hour < 17) return 'Good afternoon'
-  return 'Good evening'
-}
 
 export default async function FeedPage() {
   const supabase = await createClient()
@@ -27,13 +21,10 @@ export default async function FeedPage() {
 
   const { posts, nextCursor } = await loadFeedPage()
 
-  const greeting = getGreeting()
-
   if (posts.length === 0) {
     return (
       <div className="max-w-lg mx-auto px-4 pt-6">
-        <h1 className="font-display text-2xl text-text mb-1">{greeting}{displayName ? `, ${displayName}` : ''}</h1>
-        <p className="text-sm text-text-muted mb-6">Here&apos;s what&apos;s brewing</p>
+        <FeedGreeting displayName={displayName} />
         <div className="text-center py-16">
           <p className="text-4xl mb-3">☕</p>
           <p className="text-text-muted text-sm">No posts yet.</p>
@@ -47,8 +38,7 @@ export default async function FeedPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
-      <h1 className="font-display text-2xl text-text mb-1">{greeting}{displayName ? `, ${displayName}` : ''}</h1>
-      <p className="text-sm text-text-muted mb-6">Here&apos;s what&apos;s brewing</p>
+      <FeedGreeting displayName={displayName} />
       <FeedGrid initialPosts={posts} initialCursor={nextCursor} userId={user?.id} />
     </div>
   )
