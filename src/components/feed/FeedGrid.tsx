@@ -5,7 +5,16 @@ import PostCard from './PostCard'
 import { loadFeedPage } from '@/lib/actions/feed'
 import type { PostWithRelations } from '@/lib/types'
 
-const BREW_METHODS = ['Pour Over', 'Espresso', 'French Press', 'AeroPress', 'Cold Brew', 'Moka Pot']
+const BREW_METHODS = [
+  { value: 'espresso', label: 'Espresso' },
+  { value: 'pour-over', label: 'Pour Over' },
+  { value: 'aeropress', label: 'AeroPress' },
+  { value: 'french-press', label: 'French Press' },
+  { value: 'cold-brew', label: 'Cold Brew' },
+  { value: 'moka-pot', label: 'Moka Pot' },
+  { value: 'chemex', label: 'Chemex' },
+  { value: 'v60', label: 'V60' },
+]
 
 type Props = {
   initialPosts: PostWithRelations[]
@@ -75,15 +84,15 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
         </button>
         {BREW_METHODS.map(method => (
           <button
-            key={method}
-            onClick={() => setFilter(method)}
+            key={method.value}
+            onClick={() => setFilter(method.value)}
             className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
-              filter === method
+              filter === method.value
                 ? 'bg-bloom text-base'
                 : 'glass-subtle text-text-muted hover:text-text'
             }`}
           >
-            {method}
+            {method.label}
           </button>
         ))}
       </div>
