@@ -4,6 +4,7 @@ import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
 import DeletePostButton from '@/components/feed/DeletePostButton'
 import FeedCommentInput from '@/components/feed/FeedCommentInput'
+import LikeButton from '@/components/feed/LikeButton'
 import type { PostWithRelations } from '@/lib/types'
 
 function timeAgo(dateStr: string) {
@@ -35,10 +36,13 @@ export default function PostCard({ post, userId }: { post: PostWithRelations; us
 
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <Link href={`/profile/${username}`} className="flex items-center gap-2">
-            <Avatar username={username} avatarUrl={post.profiles?.avatar_url} size="sm" />
-            <span className="text-sm font-medium text-text">{username}</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <LikeButton postId={post.id} likeCount={post.like_count ?? 0} liked={post.liked_by_user ?? false} />
+            <Link href={`/profile/${username}`} className="flex items-center gap-2">
+              <Avatar username={username} avatarUrl={post.profiles?.avatar_url} size="sm" />
+              <span className="text-sm font-medium text-text">{username}</span>
+            </Link>
+          </div>
           <div className="flex items-center gap-3">
             {isOwner && <DeletePostButton postId={post.id} />}
             <span className="text-xs text-text-dim">{timeAgo(post.created_at)}</span>

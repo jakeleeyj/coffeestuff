@@ -24,6 +24,30 @@ export async function addComment(postId: string, body: string) {
   revalidatePath(`/posts/${postId}`)
 }
 
+export async function toggleLike(postId: string) {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  // Check if already liked
+  const { data: existing } = await supabase
+    .from('likes')
+    .select('post_id')
+    .eq('post_id', postId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (existing) {
+    await supabase.from('likes').delete().eq('post_id', postId).eq('user_id', user.id)
+  } else {
+    await supabase.from('likes').insert({ post_id: postId, user_id: user.id })
+  }
+
+  revalidatePath('/feed')
+  revalidatePath(`/posts/${postId}`)
+}
+
 export async function deleteComment(commentId: string, postId: string) {
   const supabase = await createClient()
 

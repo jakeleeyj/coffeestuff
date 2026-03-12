@@ -7,6 +7,7 @@ import Badge from '@/components/ui/Badge'
 import { deletePost } from '@/lib/actions/posts'
 import CommentForm from '@/components/posts/CommentForm'
 import DeleteCommentButton from '@/components/posts/DeleteCommentButton'
+import LikeButton from '@/components/feed/LikeButton'
 
 function timeAgo(dateStr: string) {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
@@ -30,11 +31,13 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
   if (!post) notFound()
 
-  // Fetch profile, bean tags, and comments separately
-  const [{ data: profile }, { data: postBeans }, { data: comments }] = await Promise.all([
+  // Fetch profile, bean tags, comments, and likes separately
+  const [{ data: profile }, { data: postBeans }, { data: comments }, { count: likeCount }, { data: userLike }] = await Promise.all([
     supabase.from('profiles').select('id, username, avatar_url').eq('id', post.user_id).single(),
     supabase.from('post_beans').select('beans(id, name, roast_level)').eq('post_id', id),
     supabase.from('comments').select('id, body, created_at, user_id').eq('post_id', id).order('created_at', { ascending: true }),
+    supabase.from('likes').select('*', { count: 'exact', head: true }).eq('post_id', id),
+    user ? supabase.from('likes').select('post_id').eq('post_id', id).eq('user_id', user.id).maybeSingle() : { data: null },
   ])
 
   // Fetch comment author profiles
@@ -83,6 +86,8 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
         </div>
 
         <div className="p-5 space-y-4">
+          <LikeButton postId={post.id} likeCount={likeCount ?? 0} liked={!!userLike} />
+
           {(post.brew_method || beans.length > 0) && (
             <div className="flex flex-wrap gap-1.5">
               {post.brew_method && <Badge label={post.brew_method} />}

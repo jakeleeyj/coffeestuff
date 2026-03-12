@@ -46,16 +46,24 @@ export default async function FeedPage() {
     .select('post_id, beans(id, name, roast_level)')
     .in('post_id', postIds)
 
-  // Fetch comment counts
-  const { data: commentCounts } = await supabase
-    .from('comments')
-    .select('post_id')
-    .in('post_id', postIds)
+  // Fetch comment counts + like counts + user's likes
+  const [{ data: commentRows }, { data: likeRows }, { data: userLikes }] = await Promise.all([
+    supabase.from('comments').select('post_id').in('post_id', postIds),
+    supabase.from('likes').select('post_id').in('post_id', postIds),
+    user
+      ? supabase.from('likes').select('post_id').eq('user_id', user.id).in('post_id', postIds)
+      : { data: [] },
+  ])
 
   const commentCountMap: Record<string, number> = {}
-  for (const c of commentCounts ?? []) {
+  for (const c of commentRows ?? []) {
     commentCountMap[c.post_id] = (commentCountMap[c.post_id] ?? 0) + 1
   }
+  const likeCountMap: Record<string, number> = {}
+  for (const l of likeRows ?? []) {
+    likeCountMap[l.post_id] = (likeCountMap[l.post_id] ?? 0) + 1
+  }
+  const userLikeSet = new Set((userLikes ?? []).map(l => l.post_id))
 
   // Merge into PostWithRelations shape
   const profileMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p]))
@@ -70,6 +78,8 @@ export default async function FeedPage() {
     profiles: profileMap[post.user_id] ?? null,
     post_beans: beanMap[post.id] ?? [],
     comment_count: commentCountMap[post.id] ?? 0,
+    like_count: likeCountMap[post.id] ?? 0,
+    liked_by_user: userLikeSet.has(post.id),
   }))
 
   return (

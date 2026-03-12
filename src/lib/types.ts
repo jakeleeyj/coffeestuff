@@ -7,6 +7,8 @@ export type PostWithRelations = {
   user_id?: string
   recipe?: string | null
   comment_count?: number
+  like_count?: number
+  liked_by_user?: boolean
   profiles: {
     id: string
     username: string
