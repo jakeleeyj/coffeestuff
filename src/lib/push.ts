@@ -1,13 +1,24 @@
-import webpush from 'web-push'
 import { createClient } from '@/lib/supabase/server'
 
-webpush.setVapidDetails(
-  'mailto:bloom@example.com',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!,
-)
+let configured = false
+
+async function getWebPush() {
+  const webpush = (await import('web-push')).default
+  if (!configured) {
+    webpush.setVapidDetails(
+      'mailto:bloom@example.com',
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
+      process.env.VAPID_PRIVATE_KEY!,
+    )
+    configured = true
+  }
+  return webpush
+}
 
 export async function sendPushToAll(title: string, body: string, excludeUserId?: string) {
+  if (!process.env.VAPID_PRIVATE_KEY) return // skip if not configured
+
+  const webpush = await getWebPush()
   const supabase = await createClient()
 
   let query = supabase.from('push_subscriptions').select('endpoint, keys_p256dh, keys_auth, user_id')
@@ -29,7 +40,6 @@ export async function sendPushToAll(title: string, body: string, excludeUserId?:
         },
         payload,
       ).catch(() => {
-        // Subscription expired — clean it up
         supabase.from('push_subscriptions').delete().eq('endpoint', sub.endpoint).then(() => {})
       })
     )
