@@ -6,6 +6,8 @@ import type { PostWithRelations } from '@/lib/types'
 export default async function FeedPage() {
   const supabase = await createClient()
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   // Fetch posts first — no joins, avoids FK dependency issues
   const { data: posts, error } = await supabase
     .from('posts')
@@ -61,7 +63,7 @@ export default async function FeedPage() {
   return (
     <div className="max-w-lg mx-auto px-4 pt-6">
       <h1 className="font-display text-2xl text-text mb-6">Feed</h1>
-      <FeedGrid posts={enriched} />
+      <FeedGrid posts={enriched} userId={user?.id} />
     </div>
   )
 }

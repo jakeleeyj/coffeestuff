@@ -72,10 +72,14 @@ export async function deletePost(postId: string) {
   if (error) throw new Error(error.message)
 
   // Clean up storage
-  const url = new URL(post.image_url)
-  const parts = url.pathname.split('/post-images/')
-  if (parts[1]) {
-    await supabase.storage.from('post-images').remove([parts[1]])
+  if (post.image_url) {
+    try {
+      const url = new URL(post.image_url)
+      const parts = url.pathname.split('/post-images/')
+      if (parts[1]) {
+        await supabase.storage.from('post-images').remove([parts[1]])
+      }
+    } catch { /* ignore storage cleanup errors */ }
   }
 
   revalidatePath('/feed')

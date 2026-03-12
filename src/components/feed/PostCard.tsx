@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
+import { deletePost } from '@/lib/actions/posts'
 import type { PostWithRelations } from '@/lib/types'
 
 function timeAgo(dateStr: string) {
@@ -12,9 +13,11 @@ function timeAgo(dateStr: string) {
   return `${Math.floor(seconds / 86400)}d ago`
 }
 
-export default function PostCard({ post }: { post: PostWithRelations }) {
+export default function PostCard({ post, userId }: { post: PostWithRelations; userId?: string }) {
   const username = post.profiles?.username ?? 'unknown'
   const beans = post.post_beans.map(pb => pb.beans).filter(Boolean)
+  const isOwner = !!userId && userId === post.user_id
+  const deletePostById = deletePost.bind(null, post.id)
 
   return (
     <article className="bg-surface border border-border rounded-2xl overflow-hidden hover:border-bloom-dim transition-colors">
@@ -36,7 +39,16 @@ export default function PostCard({ post }: { post: PostWithRelations }) {
             <Avatar username={username} avatarUrl={post.profiles?.avatar_url} size="sm" />
             <span className="text-sm font-medium text-text">{username}</span>
           </Link>
-          <span className="text-xs text-text-dim">{timeAgo(post.created_at)}</span>
+          <div className="flex items-center gap-3">
+            {isOwner && (
+              <form action={deletePostById}>
+                <button type="submit" className="text-xs text-text-dim hover:text-red-400 transition-colors">
+                  Delete
+                </button>
+              </form>
+            )}
+            <span className="text-xs text-text-dim">{timeAgo(post.created_at)}</span>
+          </div>
         </div>
 
         {post.caption && (
