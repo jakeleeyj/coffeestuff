@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
-const AUTH_ROUTES = ['/login', '/signup']
+const HIDDEN_ROUTES = ['/login', '/signup', '/']
 
 function IconFeed({ active }: { active: boolean }) {
   return (
@@ -48,7 +48,7 @@ export default function Navbar() {
     return () => subscription.unsubscribe()
   }, [])
 
-  if (AUTH_ROUTES.includes(pathname)) return null
+  if (HIDDEN_ROUTES.includes(pathname)) return null
 
   const username = user?.user_metadata?.username ?? user?.email?.split('@')[0] ?? ''
   const initials = username.slice(0, 2).toUpperCase()
