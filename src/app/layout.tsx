@@ -30,6 +30,11 @@ export const metadata: Metadata = {
   title: 'Bloom — Pretentious Coffee Snob Club',
   description: 'Pretentious Coffee Snob Club',
   manifest: '/manifest.json',
+  openGraph: {
+    title: 'Bloom — Pretentious Coffee Snob Club',
+    description: 'Pretentious Coffee Snob Club',
+    siteName: 'Bloom',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
