@@ -9,6 +9,7 @@ import { updateProfile } from '@/lib/actions/profile'
 export default function EditProfilePage() {
   const router = useRouter()
   const fileRef = useRef<HTMLInputElement>(null)
+  const [displayName, setDisplayName] = useState('')
   const [bio, setBio] = useState('')
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
@@ -23,11 +24,12 @@ export default function EditProfilePage() {
 
       const { data: profile } = await supabase
         .from('profiles')
-        .select('bio, avatar_url')
+        .select('bio, avatar_url, display_name')
         .eq('id', user.id)
         .single()
 
       if (profile) {
+        setDisplayName(profile.display_name ?? '')
         setBio(profile.bio ?? '')
         setAvatarUrl(profile.avatar_url)
       }
@@ -105,6 +107,23 @@ export default function EditProfilePage() {
           >
             Change photo
           </button>
+        </div>
+
+        {/* Display Name */}
+        <div>
+          <label htmlFor="display_name" className="block text-sm font-medium text-text-muted mb-1">
+            Display Name
+          </label>
+          <input
+            id="display_name"
+            name="display_name"
+            type="text"
+            maxLength={30}
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Your nickname..."
+            className="w-full bg-white/5 border border-glass-border rounded-lg px-3 py-2 text-sm text-text placeholder:text-text-muted/50 focus:outline-none focus:border-bloom transition-colors"
+          />
         </div>
 
         {/* Bio */}

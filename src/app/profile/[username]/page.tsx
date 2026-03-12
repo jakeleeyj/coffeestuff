@@ -9,7 +9,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('id, username, avatar_url, bio')
+    .select('id, username, display_name, avatar_url, bio')
     .eq('username', username)
     .single()
 
@@ -30,6 +30,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
     <div className="max-w-lg mx-auto px-4 pt-8 pb-8">
       <ProfileHeader
         username={profile.username}
+        displayName={profile.display_name}
         avatarUrl={profile.avatar_url}
         bio={profile.bio}
         postCount={posts?.length ?? 0}

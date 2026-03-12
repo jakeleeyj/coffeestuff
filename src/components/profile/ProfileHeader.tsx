@@ -3,18 +3,22 @@ import Avatar from '@/components/ui/Avatar'
 
 type Props = {
   username: string
+  displayName: string | null
   avatarUrl: string | null
   bio: string | null
   postCount: number
   isOwner: boolean
 }
 
-export default function ProfileHeader({ username, avatarUrl, bio, postCount, isOwner }: Props) {
+export default function ProfileHeader({ username, displayName, avatarUrl, bio, postCount, isOwner }: Props) {
   return (
     <div className="glass rounded-2xl flex flex-col items-center text-center gap-4 p-6">
       <Avatar username={username} avatarUrl={avatarUrl} size="lg" />
       <div>
-        <h1 className="font-display text-2xl text-text">{username}</h1>
+        {displayName && <h1 className="font-display text-2xl text-text">{displayName}</h1>}
+        <p className={`text-sm ${displayName ? 'text-text-muted' : 'font-display text-2xl text-text'}`}>
+          {displayName ? `@${username}` : username}
+        </p>
         {bio && <p className="text-sm text-text-muted mt-1 max-w-xs">{bio}</p>}
       </div>
       <p className="text-sm text-text-muted">

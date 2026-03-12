@@ -10,10 +10,11 @@ export async function updateProfile(formData: FormData) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const display_name = (formData.get('display_name') as string) || null
   const bio = (formData.get('bio') as string) || null
   const avatarFile = formData.get('avatar') as File
 
-  const updates: Record<string, string | null> = { bio }
+  const updates: Record<string, string | null> = { display_name, bio }
 
   // Upload avatar if provided
   if (avatarFile && avatarFile.size > 0) {

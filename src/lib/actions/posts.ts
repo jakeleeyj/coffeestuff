@@ -51,7 +51,6 @@ export async function createPost(formData: FormData) {
   }
 
   revalidatePath('/feed')
-  redirect(`/posts/${postId}`)
 }
 
 export async function deletePost(postId: string) {

@@ -5,6 +5,7 @@ import Badge from '@/components/ui/Badge'
 import DeletePostButton from '@/components/feed/DeletePostButton'
 import FeedCommentInput from '@/components/feed/FeedCommentInput'
 import LikeButton from '@/components/feed/LikeButton'
+import DoubleTapLike from '@/components/feed/DoubleTapLike'
 import type { PostWithRelations } from '@/lib/types'
 
 function timeAgo(dateStr: string) {
@@ -22,17 +23,19 @@ export default function PostCard({ post, userId }: { post: PostWithRelations; us
 
   return (
     <article className="glass rounded-2xl overflow-hidden hover:border-bloom-dim/20 transition-all">
-      <Link href={`/posts/${post.id}`}>
-        <div className="relative aspect-square">
-          <Image
-            src={post.image_url}
-            alt={post.caption ?? 'Coffee post'}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 600px"
-          />
-        </div>
-      </Link>
+      <DoubleTapLike postId={post.id} liked={post.liked_by_user ?? false}>
+        <Link href={`/posts/${post.id}`}>
+          <div className="relative aspect-square">
+            <Image
+              src={post.image_url}
+              alt={post.caption ?? 'Coffee post'}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 600px"
+            />
+          </div>
+        </Link>
+      </DoubleTapLike>
 
       <div className="p-4 space-y-3">
         <div className="flex items-center justify-between">

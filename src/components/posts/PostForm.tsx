@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { createPost } from '@/lib/actions/posts'
 import BeanTagSelector from './BeanTagSelector'
 
@@ -53,12 +54,14 @@ function formatBytes(bytes: number) {
 }
 
 export default function PostForm({ beans }: { beans: Bean[] }) {
+  const router = useRouter()
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [compressedFile, setCompressedFile] = useState<File | null>(null)
   const [compressing, setCompressing] = useState(false)
   const [fileSize, setFileSize] = useState<string | null>(null)
   const [selectedBeans, setSelectedBeans] = useState<string[]>([])
   const [pending, startTransition] = useTransition()
+  const [success, setSuccess] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -91,10 +94,27 @@ export default function PostForm({ beans }: { beans: Bean[] }) {
     e.preventDefault()
     if (!compressedFile) return
     const formData = new FormData(e.currentTarget)
-    // Replace the raw file input with the compressed file
     formData.set('image', compressedFile, 'photo.jpg')
     selectedBeans.forEach(id => formData.append('bean_ids', id))
-    startTransition(() => createPost(formData))
+    startTransition(async () => {
+      await createPost(formData)
+      setSuccess(true)
+      setTimeout(() => router.push('/feed'), 1500)
+    })
+  }
+
+  if (success) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <div className="w-20 h-20 rounded-full bg-bloom/20 flex items-center justify-center check-pop">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#d4963f" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+        </div>
+        <p className="font-display text-xl text-cream">Shared!</p>
+        <p className="text-sm text-text-muted">Your post is live</p>
+      </div>
+    )
   }
 
   return (

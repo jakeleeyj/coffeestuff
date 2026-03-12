@@ -30,7 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
         <ToastProvider>
-          <main className="pb-24 md:pb-0 md:pt-14">{children}</main>
+          <main className="pb-24 md:pb-0 md:pt-14 page-in">{children}</main>
           <Navbar />
         </ToastProvider>
       </body>
