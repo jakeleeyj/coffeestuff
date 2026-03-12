@@ -266,6 +266,18 @@ body::after {
   box-shadow: 0 0 8px rgba(212, 150, 63, 0.15);
 }
 
+/* Nav icon bounce on tab switch */
+@keyframes navPop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); }
+  70% { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+
+.nav-pop {
+  animation: navPop 0.35s cubic-bezier(0.2, 0, 0, 1);
+}
+
 /* Coffee bean spinner */
 @keyframes beanSpin {
   0% { transform: rotate(0deg); }

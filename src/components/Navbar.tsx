@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
@@ -48,7 +48,19 @@ export default function Navbar() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [unreadCount, setUnreadCount] = useState(0)
+  const prevPathRef = useRef(pathname)
+  const [animating, setAnimating] = useState<string | null>(null)
   const supabase = createClient()
+
+  // Detect tab change and trigger bounce
+  useEffect(() => {
+    if (pathname !== prevPathRef.current) {
+      setAnimating(pathname)
+      const t = setTimeout(() => setAnimating(null), 400)
+      prevPathRef.current = pathname
+      return () => clearTimeout(t)
+    }
+  }, [pathname])
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -168,14 +180,14 @@ export default function Navbar() {
           {/* Left side */}
           <div className="flex-1 flex justify-evenly">
             <Link href="/feed" className="flex flex-col items-center gap-1 py-1">
-              <span className={pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}>
+              <span className={`${pathname === '/feed' ? 'text-bloom' : 'text-text-muted'} ${animating === '/feed' ? 'nav-pop' : ''}`}>
                 <IconFeed active={pathname === '/feed'} />
               </span>
               <span className={`text-[10px] font-medium ${pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}`}>Feed</span>
             </Link>
 
             <Link href="/beans" className="flex flex-col items-center gap-1 py-1">
-              <span className={pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}>
+              <span className={`${pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'} ${animating?.startsWith('/beans') ? 'nav-pop' : ''}`}>
                 <IconBeans active={pathname.startsWith('/beans')} />
               </span>
               <span className={`text-[10px] font-medium ${pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}`}>Beans</span>
@@ -196,7 +208,7 @@ export default function Navbar() {
           {/* Right side */}
           <div className="flex-1 flex justify-evenly">
             <Link href="/notifications" className="flex flex-col items-center gap-1 py-1 relative">
-              <span className={pathname === '/notifications' ? 'text-bloom' : 'text-text-muted'}>
+              <span className={`${pathname === '/notifications' ? 'text-bloom' : 'text-text-muted'} ${animating === '/notifications' ? 'nav-pop' : ''}`}>
                 <IconBell active={pathname === '/notifications'} />
               </span>
               <span className={`text-[10px] font-medium ${pathname === '/notifications' ? 'text-bloom' : 'text-text-muted'}`}>Alerts</span>
@@ -211,7 +223,7 @@ export default function Navbar() {
               href={user ? `/profile/${username}` : '/login'}
               className="flex flex-col items-center gap-1 py-1"
             >
-              <span className={pathname.startsWith('/profile') ? 'text-bloom' : 'text-text-muted'}>
+              <span className={`${pathname.startsWith('/profile') ? 'text-bloom' : 'text-text-muted'} ${animating?.startsWith('/profile') ? 'nav-pop' : ''}`}>
                 <IconProfile active={pathname.startsWith('/profile')} />
               </span>
               <span className={`text-[10px] font-medium ${pathname.startsWith('/profile') ? 'text-bloom' : 'text-text-muted'}`}>
