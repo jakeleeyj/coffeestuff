@@ -49,7 +49,7 @@ export default async function FeedPage() {
   const beanMap: Record<string, { beans: { id: string; name: string; roast_level: string | null } | null }[]> = {}
   for (const pb of postBeans ?? []) {
     if (!beanMap[pb.post_id]) beanMap[pb.post_id] = []
-    beanMap[pb.post_id].push({ beans: pb.beans as { id: string; name: string; roast_level: string | null } | null })
+    beanMap[pb.post_id].push({ beans: pb.beans as unknown as { id: string; name: string; roast_level: string | null } | null })
   }
 
   const enriched: PostWithRelations[] = posts.map(post => ({
