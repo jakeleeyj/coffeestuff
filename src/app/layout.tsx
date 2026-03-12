@@ -27,8 +27,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Bloom — Coffee Community',
-  description: 'Share your coffee moments',
+  title: 'Bloom — Pretentious Coffee Snob Club',
+  description: 'Pretentious Coffee Snob Club',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
