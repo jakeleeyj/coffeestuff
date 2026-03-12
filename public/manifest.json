@@ -4,8 +4,8 @@
   "description": "Share your coffee moments",
   "start_url": "/feed",
   "display": "standalone",
-  "background_color": "#0a0704",
-  "theme_color": "#0a0704",
+  "background_color": "#0a0b10",
+  "theme_color": "#0a0b10",
   "icons": [
     {
       "src": "/icons/icon-192.png",

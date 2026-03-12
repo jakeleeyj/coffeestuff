@@ -8,9 +8,9 @@ export default function SignupPage() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background: `
-            radial-gradient(ellipse at 50% 20%, rgba(212, 150, 63, 0.12) 0%, transparent 50%),
-            radial-gradient(ellipse at 20% 80%, rgba(138, 95, 40, 0.06) 0%, transparent 40%),
-            radial-gradient(ellipse at 80% 60%, rgba(212, 150, 63, 0.04) 0%, transparent 40%)
+            radial-gradient(ellipse at 50% 20%, rgba(212, 150, 63, 0.1) 0%, transparent 50%),
+            radial-gradient(ellipse at 20% 80%, rgba(80, 100, 160, 0.06) 0%, transparent 40%),
+            radial-gradient(ellipse at 80% 60%, rgba(212, 150, 63, 0.03) 0%, transparent 40%)
           `
         }}
       />

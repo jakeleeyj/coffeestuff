@@ -43,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="theme-color" content="#0a0704" />
+        <meta name="theme-color" content="#0a0b10" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
       </head>
       <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>

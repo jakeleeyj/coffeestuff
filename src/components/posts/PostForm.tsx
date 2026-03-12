@@ -8,7 +8,7 @@ import ImageCropper from './ImageCropper'
 
 type Bean = { id: string; name: string; roast_level: string | null }
 
-const inputCls = "w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom transition-colors"
+const inputCls = "w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom/60 focus:bg-white/[0.05] transition-all"
 const labelCls = "block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide"
 
 function formatBytes(bytes: number) {

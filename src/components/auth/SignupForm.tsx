@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
+const inputCls = "w-full bg-white/[0.03] border border-white/[0.06] rounded-xl px-4 py-3 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom/60 focus:bg-white/[0.05] transition-all"
+
 export default function SignupForm() {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -35,21 +37,21 @@ export default function SignupForm() {
 
   if (success) {
     return (
-      <div className="bg-bloom-glow border border-bloom-dim text-bloom text-sm px-4 py-3 rounded-xl text-center">
+      <div className="bg-bloom/10 border border-bloom/20 text-bloom text-sm px-4 py-3 rounded-xl text-center">
         Check your email to confirm your account, then sign in.
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-950/50 border border-red-800/50 text-red-300 text-sm px-3 py-2 rounded-lg">
+        <div className="bg-red-950/50 border border-red-800/40 text-red-300 text-sm px-4 py-2.5 rounded-xl">
           {error}
         </div>
       )}
       <div>
-        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">Username</label>
+        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wider">Username</label>
         <input
           type="text"
           value={username}
@@ -58,37 +60,37 @@ export default function SignupForm() {
           minLength={3}
           pattern="[a-zA-Z0-9_]+"
           title="Letters, numbers and underscores only"
-          className="w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom transition-colors"
+          className={inputCls}
           placeholder="yourname"
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">Email</label>
+        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wider">Email</label>
         <input
           type="email"
           value={email}
           onChange={e => setEmail(e.target.value)}
           required
-          className="w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text placeholder-text-dim focus:outline-none focus:border-bloom transition-colors"
+          className={inputCls}
           placeholder="you@example.com"
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wide">Password</label>
+        <label className="block text-xs font-medium text-text-muted mb-1.5 uppercase tracking-wider">Password</label>
         <input
           type="password"
           value={password}
           onChange={e => setPassword(e.target.value)}
           required
           minLength={6}
-          className="w-full bg-surface-raised border border-border rounded-xl px-3 py-2.5 text-sm text-text focus:outline-none focus:border-bloom transition-colors"
+          className={inputCls}
           placeholder="••••••••"
         />
       </div>
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-bloom text-base font-semibold py-2.5 rounded-xl text-sm hover:bg-bloom-hover transition-colors disabled:opacity-50 mt-1"
+        className="w-full bg-bloom text-base font-semibold py-3 rounded-xl text-sm hover:bg-bloom-hover transition-all disabled:opacity-50 glow-pulse mt-1"
       >
         {loading ? 'Creating account…' : 'Create account'}
       </button>

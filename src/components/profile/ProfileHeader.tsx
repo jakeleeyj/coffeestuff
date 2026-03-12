@@ -14,7 +14,7 @@ export default function ProfileHeader({ username, displayName, avatarUrl, bio, p
   return (
     <div className="glass rounded-2xl flex flex-col items-center text-center gap-4 p-6 relative overflow-hidden">
       {/* Ambient glow */}
-      <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full bg-bloom/10 blur-3xl pointer-events-none" />
+      <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full bg-bloom/8 blur-3xl pointer-events-none" />
       <Avatar username={username} avatarUrl={avatarUrl} size="lg" />
       <div>
         {displayName && <h1 className="font-display text-2xl text-text">{displayName}</h1>}
