@@ -10,6 +10,32 @@ export default async function BeansPage() {
     supabase.auth.getUser(),
   ])
 
+  // Fetch profiles for bean authors
+  const addedByIds = [...new Set((beans ?? []).map(b => b.added_by).filter(Boolean))] as string[]
+  const { data: profiles } = addedByIds.length > 0
+    ? await supabase.from('profiles').select('id, username').in('id', addedByIds)
+    : { data: [] }
+  const profileMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p.username]))
+
+  // Fetch ratings
+  const beanIds = (beans ?? []).map(b => b.id)
+  const [{ data: allRatings }, { data: userRatings }] = await Promise.all([
+    beanIds.length > 0
+      ? supabase.from('bean_ratings').select('bean_id, rating').in('bean_id', beanIds)
+      : { data: [] },
+    user && beanIds.length > 0
+      ? supabase.from('bean_ratings').select('bean_id, rating').eq('user_id', user.id).in('bean_id', beanIds)
+      : { data: [] },
+  ])
+
+  const ratingMap: Record<string, { sum: number; count: number }> = {}
+  for (const r of allRatings ?? []) {
+    if (!ratingMap[r.bean_id]) ratingMap[r.bean_id] = { sum: 0, count: 0 }
+    ratingMap[r.bean_id].sum += r.rating
+    ratingMap[r.bean_id].count += 1
+  }
+  const userRatingMap = Object.fromEntries((userRatings ?? []).map(r => [r.bean_id, r.rating]))
+
   return (
     <div className="max-w-lg md:max-w-4xl mx-auto px-4 pt-8">
       <div className="flex items-center justify-between mb-6">
@@ -24,7 +50,20 @@ export default async function BeansPage() {
 
       {beans && beans.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {beans.map(bean => <BeanCard key={bean.id} bean={bean} userId={user?.id} />)}
+          {beans.map(bean => {
+            const stats = ratingMap[bean.id]
+            return (
+              <BeanCard
+                key={bean.id}
+                bean={bean}
+                userId={user?.id}
+                addedByUsername={bean.added_by ? profileMap[bean.added_by] : undefined}
+                avgRating={stats ? stats.sum / stats.count : 0}
+                ratingCount={stats?.count ?? 0}
+                userRating={userRatingMap[bean.id] ?? null}
+              />
+            )
+          })}
         </div>
       ) : (
         <div className="text-center py-16">

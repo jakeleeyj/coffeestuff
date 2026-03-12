@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Badge from '@/components/ui/Badge'
+import BeanRating from '@/components/beans/BeanRating'
 import { deleteBean } from '@/lib/actions/beans'
 
 type Bean = {
@@ -11,7 +12,16 @@ type Bean = {
   added_by: string | null
 }
 
-export default function BeanCard({ bean, userId }: { bean: Bean; userId?: string }) {
+type Props = {
+  bean: Bean
+  userId?: string
+  addedByUsername?: string
+  avgRating?: number
+  ratingCount?: number
+  userRating?: number | null
+}
+
+export default function BeanCard({ bean, userId, addedByUsername, avgRating = 0, ratingCount = 0, userRating = null }: Props) {
   const isOwner = !!userId && userId === bean.added_by
   const deleteBeanById = deleteBean.bind(null, bean.id)
 
@@ -29,6 +39,14 @@ export default function BeanCard({ bean, userId }: { bean: Bean; userId?: string
         <p className="text-xs text-text-dim flex items-center gap-1">
           <span>📍</span> {bean.origin}
         </p>
+      )}
+
+      <BeanRating beanId={bean.id} avgRating={avgRating} ratingCount={ratingCount} userRating={userRating} />
+
+      {addedByUsername && (
+        <Link href={`/profile/${addedByUsername}`} className="text-[11px] text-text-dim hover:text-bloom transition-colors">
+          Added by {addedByUsername}
+        </Link>
       )}
 
       {isOwner && (
