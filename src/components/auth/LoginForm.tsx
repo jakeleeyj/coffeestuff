@@ -27,8 +27,8 @@ export default function LoginForm() {
       return
     }
 
-    router.push('/feed')
-    router.refresh()
+    // Hard navigate so middleware re-evaluates auth in PWA standalone mode
+    window.location.href = '/feed'
   }
 
   return (
