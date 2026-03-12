@@ -25,6 +25,15 @@ function IconBeans({ active }: { active: boolean }) {
   )
 }
 
+function IconBell({ active }: { active: boolean }) {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+      <path d="M13.73 21a2 2 0 01-3.46 0" />
+    </svg>
+  )
+}
+
 function IconProfile({ active }: { active: boolean }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={active ? 2 : 1.5} strokeLinecap="round" strokeLinejoin="round">
@@ -38,15 +47,31 @@ export default function Navbar() {
   const pathname = usePathname()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
+  const [unreadCount, setUnreadCount] = useState(0)
   const supabase = createClient()
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    supabase.auth.getUser().then(({ data }) => {
+      setUser(data.user)
+      if (data.user) {
+        supabase.from('notifications').select('id', { count: 'exact', head: true })
+          .eq('user_id', data.user.id).eq('read', false)
+          .then(({ count }) => setUnreadCount(count ?? 0))
+      }
+    })
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
     })
     return () => subscription.unsubscribe()
   }, [])
+
+  // Refresh unread count on route change
+  useEffect(() => {
+    if (!user) return
+    supabase.from('notifications').select('id', { count: 'exact', head: true })
+      .eq('user_id', user.id).eq('read', false)
+      .then(({ count }) => setUnreadCount(count ?? 0))
+  }, [pathname, user])
 
   if (HIDDEN_ROUTES.includes(pathname)) return null
 
@@ -97,6 +122,17 @@ export default function Navbar() {
                   className="bg-bloom text-base text-sm font-semibold px-4 py-1.5 rounded-full hover:bg-bloom-hover transition-colors"
                 >
                   + New Post
+                </Link>
+                <Link
+                  href="/notifications"
+                  className="relative text-text-muted hover:text-text transition-colors"
+                >
+                  <IconBell active={pathname === '/notifications'} />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 rounded-full bg-red-500 text-[10px] font-bold text-white flex items-center justify-center px-1">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  )}
                 </Link>
                 <Link
                   href={`/profile/${username}`}
@@ -161,6 +197,18 @@ export default function Navbar() {
 
           {/* Right side */}
           <div className="flex-1 flex justify-evenly">
+            <Link href="/notifications" className="flex flex-col items-center gap-1 py-1 relative">
+              <span className={pathname === '/notifications' ? 'text-bloom' : 'text-text-muted'}>
+                <IconBell active={pathname === '/notifications'} />
+              </span>
+              <span className={`text-[10px] font-medium ${pathname === '/notifications' ? 'text-bloom' : 'text-text-muted'}`}>Alerts</span>
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-1 min-w-[14px] h-3.5 rounded-full bg-red-500 text-[9px] font-bold text-white flex items-center justify-center px-0.5">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </Link>
+
             <Link
               href={user ? `/profile/${username}` : '/login'}
               className="flex flex-col items-center gap-1 py-1"
