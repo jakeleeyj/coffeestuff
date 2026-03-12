@@ -5,6 +5,16 @@ import { createClient } from '@/lib/supabase/server'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
 import { deletePost } from '@/lib/actions/posts'
+import CommentForm from '@/components/posts/CommentForm'
+import DeleteCommentButton from '@/components/posts/DeleteCommentButton'
+
+function timeAgo(dateStr: string) {
+  const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
+  if (seconds < 60) return 'just now'
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
+  return `${Math.floor(seconds / 86400)}d ago`
+}
 
 export default async function PostPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -20,11 +30,19 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
   if (!post) notFound()
 
-  // Fetch profile + bean tags separately
-  const [{ data: profile }, { data: postBeans }] = await Promise.all([
+  // Fetch profile, bean tags, and comments separately
+  const [{ data: profile }, { data: postBeans }, { data: comments }] = await Promise.all([
     supabase.from('profiles').select('id, username, avatar_url').eq('id', post.user_id).single(),
     supabase.from('post_beans').select('beans(id, name, roast_level)').eq('post_id', id),
+    supabase.from('comments').select('id, body, created_at, user_id').eq('post_id', id).order('created_at', { ascending: true }),
   ])
+
+  // Fetch comment author profiles
+  const commentUserIds = [...new Set((comments ?? []).map(c => c.user_id))]
+  const { data: commentProfiles } = commentUserIds.length > 0
+    ? await supabase.from('profiles').select('id, username, avatar_url').in('id', commentUserIds)
+    : { data: [] }
+  const commentProfileMap = Object.fromEntries((commentProfiles ?? []).map(p => [p.id, p]))
 
   const isOwner = user?.id === post.user_id
   const username = profile?.username ?? 'unknown'
@@ -83,6 +101,46 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
             </div>
           )}
         </div>
+      </div>
+
+      {/* Comments */}
+      <div className="mt-6 space-y-4">
+        <h2 className="text-sm font-semibold text-text">
+          Comments{comments && comments.length > 0 ? ` (${comments.length})` : ''}
+        </h2>
+
+        <CommentForm postId={post.id} />
+
+        {comments && comments.length > 0 ? (
+          <div className="space-y-3">
+            {comments.map(comment => {
+              const author = commentProfileMap[comment.user_id]
+              const authorName = author?.username ?? 'unknown'
+              const isCommentOwner = user?.id === comment.user_id
+              return (
+                <div key={comment.id} className="flex gap-2.5 group">
+                  <Link href={`/profile/${authorName}`} className="shrink-0 mt-0.5">
+                    <Avatar username={authorName} avatarUrl={author?.avatar_url} size="sm" />
+                  </Link>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-baseline gap-2">
+                      <Link href={`/profile/${authorName}`} className="text-xs font-semibold text-text hover:text-bloom transition-colors">
+                        {authorName}
+                      </Link>
+                      <span className="text-[10px] text-text-dim">{timeAgo(comment.created_at)}</span>
+                      {isCommentOwner && (
+                        <DeleteCommentButton commentId={comment.id} postId={post.id} />
+                      )}
+                    </div>
+                    <p className="text-sm text-text-muted leading-relaxed">{comment.body}</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          <p className="text-xs text-text-dim">No comments yet.</p>
+        )}
       </div>
     </div>
   )
