@@ -10,26 +10,25 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   const { id } = await params
   const supabase = await createClient()
 
-  const { data: post } = await supabase
-    .from('posts')
-    .select(`
-      id, image_url, caption, brew_method, recipe, created_at, user_id,
-      profiles(id, username, avatar_url),
-      post_beans(beans(id, name, roast_level))
-    `)
-    .eq('id', id)
-    .single()
+  const [{ data: post }, { data: { user } }] = await Promise.all([
+    supabase.from('posts')
+      .select('id, image_url, caption, brew_method, recipe, created_at, user_id')
+      .eq('id', id)
+      .single(),
+    supabase.auth.getUser(),
+  ])
 
   if (!post) notFound()
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // Fetch profile + bean tags separately
+  const [{ data: profile }, { data: postBeans }] = await Promise.all([
+    supabase.from('profiles').select('id, username, avatar_url').eq('id', post.user_id).single(),
+    supabase.from('post_beans').select('beans(id, name, roast_level)').eq('post_id', id),
+  ])
+
   const isOwner = user?.id === post.user_id
-
-  const profile = post.profiles as unknown as { id: string; username: string; avatar_url: string | null } | null
   const username = profile?.username ?? 'unknown'
-  const beans = (post.post_beans as unknown as { beans: { id: string; name: string; roast_level: string | null } | null }[])
-    .map(pb => pb.beans).filter(Boolean)
-
+  const beans = (postBeans ?? []).map(pb => pb.beans as { id: string; name: string; roast_level: string | null } | null).filter(Boolean)
   const deletePostWithId = deletePost.bind(null, post.id)
 
   return (
@@ -76,11 +75,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
               ))}
             </div>
           )}
-
-          {post.caption && (
-            <p className="text-sm text-text leading-relaxed">{post.caption}</p>
-          )}
-
+          {post.caption && <p className="text-sm text-text leading-relaxed">{post.caption}</p>}
           {post.recipe && (
             <div>
               <p className="text-xs font-medium text-text-muted uppercase tracking-wide mb-2">Recipe</p>
