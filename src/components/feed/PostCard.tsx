@@ -62,7 +62,7 @@ export default function PostCard({ post, userId, isHero = false }: { post: PostW
       {/* Image */}
       <DoubleTapLike postId={post.id} liked={post.liked_by_user ?? false}>
         <Link href={`/posts/${post.id}`}>
-          <div className={`relative img-shimmer ${isHero ? 'aspect-[4/5]' : 'aspect-square'}`}>
+          <div className="relative img-shimmer aspect-square">
             <Image
               src={post.image_url}
               alt={post.caption ?? 'Coffee post'}

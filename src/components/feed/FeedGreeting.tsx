@@ -19,21 +19,15 @@ export default function FeedGreeting({ displayName }: { displayName: string }) {
   }, [])
 
   if (!greeting) {
-    return (
-      <div className="mb-6">
-        <div className="skeleton h-8 w-48 mb-2" />
-        <div className="skeleton h-4 w-32" />
-      </div>
-    )
+    return <div className="skeleton h-6 w-48 mb-3" />
   }
 
   return (
-    <div className="mb-6">
-      <h1 className="font-display text-2xl text-text tracking-tight">
+    <div className="mb-3 flex items-center justify-between">
+      <h1 className="font-display text-lg text-text tracking-tight">
         {greeting.text}{displayName ? `, ${displayName}` : ''}
-        <span className="ml-2 inline-block" style={{ animation: 'float 3s ease-in-out infinite' }}>{greeting.emoji}</span>
+        <span className="ml-1.5 inline-block text-sm" style={{ animation: 'float 3s ease-in-out infinite' }}>{greeting.emoji}</span>
       </h1>
-      <p className="text-sm text-text-muted mt-1">Here&apos;s what&apos;s brewing</p>
     </div>
   )
 }
