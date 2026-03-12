@@ -5,7 +5,7 @@ import type { PostWithRelations } from '@/lib/types'
 
 const PAGE_SIZE = 10
 
-export async function loadFeedPage(cursor?: string): Promise<{ posts: PostWithRelations[]; nextCursor: string | null }> {
+export async function loadFeedPage(cursor?: string, brewMethod?: string): Promise<{ posts: PostWithRelations[]; nextCursor: string | null }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -17,6 +17,10 @@ export async function loadFeedPage(cursor?: string): Promise<{ posts: PostWithRe
 
   if (cursor) {
     query = query.lt('created_at', cursor)
+  }
+
+  if (brewMethod) {
+    query = query.eq('brew_method', brewMethod)
   }
 
   const { data: posts } = await query

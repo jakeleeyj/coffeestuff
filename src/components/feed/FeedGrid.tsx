@@ -5,6 +5,8 @@ import PostCard from './PostCard'
 import { loadFeedPage } from '@/lib/actions/feed'
 import type { PostWithRelations } from '@/lib/types'
 
+const BREW_METHODS = ['Pour Over', 'Espresso', 'French Press', 'AeroPress', 'Cold Brew', 'Moka Pot']
+
 type Props = {
   initialPosts: PostWithRelations[]
   initialCursor: string | null
@@ -14,17 +16,33 @@ type Props = {
 export default function FeedGrid({ initialPosts, initialCursor, userId }: Props) {
   const [posts, setPosts] = useState(initialPosts)
   const [cursor, setCursor] = useState(initialCursor)
+  const [filter, setFilter] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
   const loaderRef = useRef<HTMLDivElement>(null)
+
+  // When filter changes, reload from scratch
+  useEffect(() => {
+    if (filter === null) {
+      // Reset to initial unfiltered data
+      setPosts(initialPosts)
+      setCursor(initialCursor)
+      return
+    }
+    startTransition(async () => {
+      const { posts: filtered, nextCursor } = await loadFeedPage(undefined, filter)
+      setPosts(filtered)
+      setCursor(nextCursor)
+    })
+  }, [filter]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadMore = useCallback(() => {
     if (!cursor || isPending) return
     startTransition(async () => {
-      const { posts: newPosts, nextCursor } = await loadFeedPage(cursor)
+      const { posts: newPosts, nextCursor } = await loadFeedPage(cursor, filter ?? undefined)
       setPosts(prev => [...prev, ...newPosts])
       setCursor(nextCursor)
     })
-  }, [cursor, isPending])
+  }, [cursor, isPending, filter])
 
   useEffect(() => {
     const el = loaderRef.current
@@ -41,17 +59,46 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
     return () => observer.disconnect()
   }, [loadMore])
 
-  if (posts.length === 0) return null
-
   return (
     <div className="flex flex-col gap-4">
+      {/* Brew method filter pills */}
+      <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-none">
+        <button
+          onClick={() => setFilter(null)}
+          className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+            filter === null
+              ? 'bg-bloom text-base'
+              : 'glass-subtle text-text-muted hover:text-text'
+          }`}
+        >
+          All
+        </button>
+        {BREW_METHODS.map(method => (
+          <button
+            key={method}
+            onClick={() => setFilter(method)}
+            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              filter === method
+                ? 'bg-bloom text-base'
+                : 'glass-subtle text-text-muted hover:text-text'
+            }`}
+          >
+            {method}
+          </button>
+        ))}
+      </div>
+
       {posts.map(post => <PostCard key={post.id} post={post} userId={userId} />)}
+
+      {posts.length === 0 && !isPending && (
+        <p className="text-center text-sm text-text-muted py-8">No {filter} posts yet.</p>
+      )}
 
       <div ref={loaderRef} className="py-4 text-center">
         {isPending && (
-          <span className="text-xs text-text-muted">Loading more...</span>
+          <span className="text-xs text-text-muted">Loading...</span>
         )}
-        {!cursor && posts.length > 0 && (
+        {!cursor && posts.length > 0 && !isPending && (
           <span className="text-xs text-text-dim">You&apos;re all caught up</span>
         )}
       </div>
