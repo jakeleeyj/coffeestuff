@@ -128,25 +128,29 @@ export default function Navbar() {
         className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border-subtle"
         style={{ background: 'rgba(13, 9, 6, 0.88)', backdropFilter: 'blur(20px)', paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        <div className="flex items-center justify-around px-2 h-16">
+        <div className="flex items-center h-16">
 
-          <Link href="/feed" className="flex flex-col items-center gap-1 min-w-[60px] py-1">
-            <span className={pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}>
-              <IconFeed active={pathname === '/feed'} />
-            </span>
-            <span className={`text-[10px] font-medium ${pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}`}>Feed</span>
-          </Link>
+          {/* Left side */}
+          <div className="flex-1 flex justify-evenly">
+            <Link href="/feed" className="flex flex-col items-center gap-1 py-1">
+              <span className={pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}>
+                <IconFeed active={pathname === '/feed'} />
+              </span>
+              <span className={`text-[10px] font-medium ${pathname === '/feed' ? 'text-bloom' : 'text-text-muted'}`}>Feed</span>
+            </Link>
 
-          <Link href="/beans" className="flex flex-col items-center gap-1 min-w-[60px] py-1">
-            <span className={pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}>
-              <IconBeans active={pathname.startsWith('/beans')} />
-            </span>
-            <span className={`text-[10px] font-medium ${pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}`}>Beans</span>
-          </Link>
+            <Link href="/beans" className="flex flex-col items-center gap-1 py-1">
+              <span className={pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}>
+                <IconBeans active={pathname.startsWith('/beans')} />
+              </span>
+              <span className={`text-[10px] font-medium ${pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}`}>Beans</span>
+            </Link>
+          </div>
 
-          <Link href="/posts/new" className="flex flex-col items-center justify-center min-w-[60px]">
+          {/* Center — New Post */}
+          <Link href="/posts/new" className="flex flex-col items-center justify-center px-2">
             <span
-              className="w-11 h-11 rounded-full bg-bloom flex items-center justify-center"
+              className="w-12 h-12 rounded-full bg-bloom flex items-center justify-center"
               style={{ boxShadow: '0 0 20px rgba(212, 150, 63, 0.4)' }}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d0906" strokeWidth="2.5" strokeLinecap="round">
@@ -155,17 +159,20 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <Link
-            href={user ? `/profile/${username}` : '/login'}
-            className="flex flex-col items-center gap-1 min-w-[60px] py-1"
-          >
-            <span className={pathname.startsWith('/profile') ? 'text-bloom' : 'text-text-muted'}>
-              <IconProfile active={pathname.startsWith('/profile')} />
-            </span>
-            <span className={`text-[10px] font-medium ${pathname.startsWith('/profile') ? 'text-bloom' : 'text-text-muted'}`}>
-              {user ? username.slice(0, 8) : 'Profile'}
-            </span>
-          </Link>
+          {/* Right side */}
+          <div className="flex-1 flex justify-evenly">
+            <Link
+              href={user ? `/profile/${username}` : '/login'}
+              className="flex flex-col items-center gap-1 py-1"
+            >
+              <span className={pathname.startsWith('/profile') ? 'text-bloom' : 'text-text-muted'}>
+                <IconProfile active={pathname.startsWith('/profile')} />
+              </span>
+              <span className={`text-[10px] font-medium ${pathname.startsWith('/profile') ? 'text-bloom' : 'text-text-muted'}`}>
+                {user ? username.slice(0, 8) : 'Profile'}
+              </span>
+            </Link>
+          </div>
 
         </div>
       </nav>
