@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
+import SignOutButton from '@/components/profile/SignOutButton'
 
 type Props = {
   username: string
@@ -27,12 +28,15 @@ export default function ProfileHeader({ username, displayName, avatarUrl, bio, p
         <span className="font-semibold text-text">{postCount}</span> {postCount === 1 ? 'post' : 'posts'}
       </p>
       {isOwner && (
-        <Link
-          href="/profile/edit"
-          className="text-sm text-bloom hover:text-bloom-hover transition-colors"
-        >
-          Edit profile
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/profile/edit"
+            className="text-sm text-bloom hover:text-bloom-hover transition-colors font-medium"
+          >
+            Edit profile
+          </Link>
+          <SignOutButton />
+        </div>
       )}
     </div>
   )

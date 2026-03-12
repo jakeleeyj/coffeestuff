@@ -106,6 +106,16 @@ body::after {
   transition-duration: 0.1s;
 }
 
+/* Image fade-in — Next.js Image uses opacity for load transitions */
+.img-shimmer img {
+  animation: imgFadeIn 0.4s ease both;
+}
+
+@keyframes imgFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .glass-subtle {
   background: rgba(14, 16, 26, 0.4);
   backdrop-filter: blur(16px) saturate(1.1);

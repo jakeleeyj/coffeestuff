@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Badge from '@/components/ui/Badge'
 import BeanRating from '@/components/beans/BeanRating'
+import BackButton from '@/components/posts/BackButton'
 
 export default async function BeanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -35,11 +36,7 @@ export default async function BeanDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-8">
       <div className="flex items-center gap-3 mb-4">
-        <Link href="/beans" className="text-text-muted hover:text-text transition-colors">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </Link>
+        <BackButton />
         <h1 className="font-display text-2xl text-text">{bean.name}</h1>
       </div>
 

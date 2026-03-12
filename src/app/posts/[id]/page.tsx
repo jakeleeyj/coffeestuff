@@ -8,6 +8,7 @@ import { deletePost } from '@/lib/actions/posts'
 import CommentForm from '@/components/posts/CommentForm'
 import DeleteCommentButton from '@/components/posts/DeleteCommentButton'
 import LikeButton from '@/components/feed/LikeButton'
+import BackButton from '@/components/posts/BackButton'
 
 function timeAgo(dateStr: string) {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
@@ -55,11 +56,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   return (
     <div className="max-w-lg mx-auto px-4 pt-6 pb-8">
       <div className="flex items-center gap-3 mb-4">
-        <Link href="/feed" className="text-text-muted hover:text-text transition-colors">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M19 12H5M12 19l-7-7 7-7" />
-          </svg>
-        </Link>
+        <BackButton />
         <Link href={`/profile/${username}`} className="flex items-center gap-2">
           <Avatar username={username} avatarUrl={profile?.avatar_url} size="sm" />
           <span className="text-sm font-medium text-text">{username}</span>
