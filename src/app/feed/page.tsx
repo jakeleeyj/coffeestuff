@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import FeedGrid from '@/components/feed/FeedGrid'
 import FeedGreeting from '@/components/feed/FeedGreeting'
+import PullToRefresh from '@/components/feed/PullToRefresh'
 import { loadFeedPage } from '@/lib/actions/feed'
 
 export default async function FeedPage() {
@@ -37,9 +38,11 @@ export default async function FeedPage() {
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-6">
-      <FeedGreeting displayName={displayName} />
-      <FeedGrid initialPosts={posts} initialCursor={nextCursor} userId={user?.id} />
-    </div>
+    <PullToRefresh>
+      <div className="max-w-lg mx-auto px-4 pt-6">
+        <FeedGreeting displayName={displayName} />
+        <FeedGrid initialPosts={posts} initialCursor={nextCursor} userId={user?.id} />
+      </div>
+    </PullToRefresh>
   )
 }
