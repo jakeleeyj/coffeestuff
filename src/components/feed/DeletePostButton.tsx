@@ -3,11 +3,13 @@
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { deletePost } from '@/lib/actions/posts'
+import { useToast } from '@/components/ui/Toast'
 
 export default function DeletePostButton({ postId }: { postId: string }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [confirming, setConfirming] = useState(false)
+  const { toast } = useToast()
 
   function handleClick() {
     if (!confirming) {
@@ -17,6 +19,7 @@ export default function DeletePostButton({ postId }: { postId: string }) {
 
     startTransition(async () => {
       await deletePost(postId)
+      toast('Post deleted')
       router.refresh()
     })
   }

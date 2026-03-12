@@ -3,20 +3,27 @@
 import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 import { addComment } from '@/lib/actions/interactions'
+import { useToast } from '@/components/ui/Toast'
 
 export default function FeedCommentInput({ postId }: { postId: string }) {
   const router = useRouter()
   const [body, setBody] = useState('')
   const [isPending, startTransition] = useTransition()
+  const { toast } = useToast()
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!body.trim()) return
 
     startTransition(async () => {
-      await addComment(postId, body)
-      setBody('')
-      router.refresh()
+      try {
+        await addComment(postId, body)
+        setBody('')
+        toast('Comment posted')
+        router.refresh()
+      } catch {
+        toast('Failed to post comment', 'error')
+      }
     })
   }
 

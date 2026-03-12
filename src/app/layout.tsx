@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/Navbar'
+import { ToastProvider } from '@/components/ui/Toast'
 
 const playfair = Playfair_Display({
   variable: '--font-playfair',
@@ -28,8 +29,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
-        <main className="pb-24 md:pb-0 md:pt-14">{children}</main>
-        <Navbar />
+        <ToastProvider>
+          <main className="pb-24 md:pb-0 md:pt-14">{children}</main>
+          <Navbar />
+        </ToastProvider>
       </body>
     </html>
   )
