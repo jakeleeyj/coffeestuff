@@ -11,7 +11,7 @@ type Props = {
 
 export default function ProfileHeader({ username, avatarUrl, bio, postCount, isOwner }: Props) {
   return (
-    <div className="flex flex-col items-center text-center gap-4 pb-6 border-b border-border">
+    <div className="glass rounded-2xl flex flex-col items-center text-center gap-4 p-6">
       <Avatar username={username} avatarUrl={avatarUrl} size="lg" />
       <div>
         <h1 className="font-display text-2xl text-text">{username}</h1>

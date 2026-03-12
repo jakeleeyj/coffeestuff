@@ -57,8 +57,8 @@ export default async function NotificationsPage() {
               <Link
                 key={notif.id}
                 href={notif.post_id ? `/posts/${notif.post_id}` : '/feed'}
-                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-colors hover:bg-surface-raised ${
-                  !notif.read ? 'bg-surface' : ''
+                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all hover:bg-surface-raised ${
+                  !notif.read ? 'glass-subtle' : ''
                 }`}
               >
                 <Avatar username={actorName} avatarUrl={actor?.avatar_url} size="sm" />

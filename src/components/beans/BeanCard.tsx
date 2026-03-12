@@ -26,7 +26,7 @@ export default function BeanCard({ bean, userId, addedByUsername, avgRating = 0,
   const deleteBeanById = deleteBean.bind(null, bean.id)
 
   return (
-    <div className="bg-surface border border-border rounded-2xl p-4 flex flex-col gap-3 hover:border-bloom-dim transition-colors">
+    <div className="glass rounded-2xl p-4 flex flex-col gap-3 hover:border-bloom-dim/20 transition-all">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="font-semibold text-text truncate">{bean.name}</p>

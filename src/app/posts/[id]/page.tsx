@@ -73,7 +73,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
         )}
       </div>
 
-      <div className="bg-surface border border-border rounded-2xl overflow-hidden">
+      <div className="glass rounded-2xl overflow-hidden">
         <div className="relative aspect-square">
           <Image
             src={post.image_url}

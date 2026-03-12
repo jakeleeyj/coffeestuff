@@ -21,7 +21,7 @@ export default function PostCard({ post, userId }: { post: PostWithRelations; us
   const isOwner = !!userId && userId === post.user_id
 
   return (
-    <article className="bg-surface border border-border rounded-2xl overflow-hidden hover:border-bloom-dim transition-colors">
+    <article className="glass rounded-2xl overflow-hidden hover:border-bloom-dim/20 transition-all">
       <Link href={`/posts/${post.id}`}>
         <div className="relative aspect-square">
           <Image

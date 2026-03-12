@@ -88,8 +88,8 @@ export default function Navbar() {
     <>
       {/* ── Desktop top nav ── */}
       <nav
-        className="hidden md:flex fixed top-0 left-0 right-0 z-50 border-b border-border-subtle"
-        style={{ background: 'rgba(13, 9, 6, 0.88)', backdropFilter: 'blur(20px)' }}
+        className="hidden md:flex fixed top-0 left-0 right-0 z-50 glass-subtle"
+        style={{}}
       >
         <div className="max-w-5xl mx-auto w-full px-6 h-14 flex items-center justify-between">
           {/* Logo + links */}
@@ -161,8 +161,8 @@ export default function Navbar() {
 
       {/* ── Mobile bottom tab bar ── */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border-subtle"
-        style={{ background: 'rgba(13, 9, 6, 0.88)', backdropFilter: 'blur(20px)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass-subtle"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex items-center h-16">
 
