@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useTransition, useCallback } from 'react'
 import PostCard from './PostCard'
+import BeanSpinner from '@/components/ui/BeanSpinner'
 import { loadFeedPage } from '@/lib/actions/feed'
 import type { PostWithRelations } from '@/lib/types'
 
@@ -115,12 +116,7 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
       )}
 
       <div ref={loaderRef} className="py-6 text-center">
-        {isPending && (
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-4 h-4 rounded-full border-2 border-bloom border-t-transparent animate-spin" />
-            <span className="text-xs text-text-muted">Loading...</span>
-          </div>
-        )}
+        {isPending && <BeanSpinner label="Brewing..." />}
         {!cursor && posts.length > 0 && !isPending && (
           <p className="text-xs text-text-dim">
             You&apos;re all caught up

@@ -62,14 +62,21 @@ export default function PullToRefresh({ children }: { children: React.ReactNode 
         }}
       >
         <div className="flex items-center justify-center pt-2">
-          <div
-            className={`w-5 h-5 rounded-full border-2 border-bloom ${refreshing ? 'border-t-transparent animate-spin' : ''}`}
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            className={refreshing ? 'bean-spinner' : ''}
             style={{
               opacity: progress,
-              transform: `rotate(${progress * 360}deg) scale(${0.5 + progress * 0.5})`,
+              transform: refreshing ? undefined : `rotate(${progress * 360}deg) scale(${0.5 + progress * 0.5})`,
               transition: pulling.current ? 'none' : 'all 0.3s ease',
             }}
-          />
+          >
+            <ellipse cx="12" cy="12" rx="7" ry="5" transform="rotate(-35 12 12)" stroke="#d4963f" strokeWidth="1.5" fill="rgba(212, 150, 63, 0.15)" />
+            <path d="M12 7.5c0 2.5-1.5 4.5-1.5 4.5s1.5 2 1.5 4.5" stroke="#d4963f" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
         </div>
       </div>
 
