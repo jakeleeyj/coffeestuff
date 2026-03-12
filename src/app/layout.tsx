@@ -50,7 +50,7 @@ export default function RootLayout({
       </head>
       <body className={`${playfair.variable} ${jakarta.variable} antialiased`}>
         <ToastProvider>
-          <main className="pb-28 md:pb-0 md:pt-14 page-in" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'calc(7rem + env(safe-area-inset-bottom))' }}>{children}</main>
+          <main className="main-layout page-in">{children}</main>
           <Navbar />
         </ToastProvider>
         <ServiceWorker />

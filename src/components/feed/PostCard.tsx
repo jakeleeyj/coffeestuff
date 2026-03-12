@@ -39,6 +39,7 @@ function timeAgo(dateStr: string) {
 
 export default function PostCard({ post, userId, isHero = false }: { post: PostWithRelations; userId?: string; isHero?: boolean }) {
   const username = post.profiles?.username ?? 'unknown'
+  const displayName = post.profiles?.display_name || username
   const beans = post.post_beans.map(pb => pb.beans).filter(Boolean)
   const isOwner = !!userId && userId === post.user_id
 
@@ -49,7 +50,7 @@ export default function PostCard({ post, userId, isHero = false }: { post: PostW
         <Link href={`/profile/${username}`} className="flex items-center gap-2.5 flex-1 min-w-0">
           <Avatar username={username} avatarUrl={post.profiles?.avatar_url} size="sm" />
           <div className="min-w-0">
-            <span className="text-sm font-semibold text-text block truncate">{username}</span>
+            <span className="text-sm font-semibold text-text block truncate">{displayName}</span>
           </div>
         </Link>
         <div className="flex items-center gap-2.5 shrink-0">
@@ -105,7 +106,7 @@ export default function PostCard({ post, userId, isHero = false }: { post: PostW
         {/* Caption */}
         {post.caption && (
           <p className="text-[13px] text-text leading-relaxed">
-            <Link href={`/profile/${username}`} className="font-semibold hover:text-bloom transition-colors">{username}</Link>
+            <Link href={`/profile/${username}`} className="font-semibold hover:text-bloom transition-colors">{displayName}</Link>
             {' '}<span className="text-text/85">{post.caption}</span>
           </p>
         )}

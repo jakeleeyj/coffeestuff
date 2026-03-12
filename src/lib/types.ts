@@ -15,6 +15,7 @@ export type PostWithRelations = {
   profiles: {
     id: string
     username: string
+    display_name: string | null
     avatar_url: string | null
   } | null
   post_beans: {

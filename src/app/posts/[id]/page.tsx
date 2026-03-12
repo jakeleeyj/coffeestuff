@@ -34,7 +34,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
   // Fetch profile, bean tags, comments, and likes separately
   const [{ data: profile }, { data: postBeans }, { data: comments }, { count: likeCount }, { data: userLike }] = await Promise.all([
-    supabase.from('profiles').select('id, username, avatar_url').eq('id', post.user_id).single(),
+    supabase.from('profiles').select('id, username, display_name, avatar_url').eq('id', post.user_id).single(),
     supabase.from('post_beans').select('beans(id, name, roast_level)').eq('post_id', id),
     supabase.from('comments').select('id, body, created_at, user_id').eq('post_id', id).order('created_at', { ascending: true }),
     supabase.from('likes').select('*', { count: 'exact', head: true }).eq('post_id', id),
@@ -50,6 +50,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
   const isOwner = user?.id === post.user_id
   const username = profile?.username ?? 'unknown'
+  const displayName = profile?.display_name || username
   const beans = (postBeans ?? []).map(pb => pb.beans as unknown as { id: string; name: string; roast_level: string | null } | null).filter(Boolean)
   const deletePostWithId = deletePost.bind(null, post.id)
 
@@ -59,7 +60,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
         <BackButton />
         <Link href={`/profile/${username}`} className="flex items-center gap-2">
           <Avatar username={username} avatarUrl={profile?.avatar_url} size="sm" />
-          <span className="text-sm font-medium text-text">{username}</span>
+          <span className="text-sm font-medium text-text">{displayName}</span>
         </Link>
         {isOwner && (
           <form action={deletePostWithId} className="ml-auto">

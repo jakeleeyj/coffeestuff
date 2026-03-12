@@ -57,6 +57,18 @@ body::after {
   background-size: 256px;
 }
 
+/* Main layout spacing — mobile: safe area top + bottom nav room; desktop: top nav */
+.main-layout {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+}
+@media (min-width: 768px) {
+  .main-layout {
+    padding-top: 3.5rem;
+    padding-bottom: 0;
+  }
+}
+
 /* Smooth tap highlight on mobile */
 * {
   -webkit-tap-highlight-color: transparent;

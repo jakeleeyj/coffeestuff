@@ -30,7 +30,7 @@ export async function loadFeedPage(cursor?: string, brewMethod?: string): Promis
   const userIds = [...new Set(posts.map(p => p.user_id))]
 
   const [{ data: profiles }, { data: postBeans }, { data: commentRows }, { data: likeRows }, { data: userLikes }] = await Promise.all([
-    supabase.from('profiles').select('id, username, avatar_url').in('id', userIds),
+    supabase.from('profiles').select('id, username, display_name, avatar_url').in('id', userIds),
     supabase.from('post_beans').select('post_id, beans(id, name, roast_level)').in('post_id', postIds),
     supabase.from('comments').select('post_id').in('post_id', postIds),
     supabase.from('likes').select('post_id').in('post_id', postIds),
