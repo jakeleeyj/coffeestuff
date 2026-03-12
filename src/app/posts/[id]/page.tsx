@@ -28,7 +28,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
   const isOwner = user?.id === post.user_id
   const username = profile?.username ?? 'unknown'
-  const beans = (postBeans ?? []).map(pb => pb.beans as { id: string; name: string; roast_level: string | null } | null).filter(Boolean)
+  const beans = (postBeans ?? []).map(pb => pb.beans as unknown as { id: string; name: string; roast_level: string | null } | null).filter(Boolean)
   const deletePostWithId = deletePost.bind(null, post.id)
 
   return (
