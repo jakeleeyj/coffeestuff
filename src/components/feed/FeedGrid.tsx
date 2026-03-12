@@ -32,7 +32,6 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
   // When filter changes, reload from scratch
   useEffect(() => {
     if (filter === null) {
-      // Reset to initial unfiltered data
       setPosts(initialPosts)
       setCursor(initialCursor)
       return
@@ -69,15 +68,15 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
   }, [loadMore])
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-5">
       {/* Brew method filter pills */}
-      <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-none">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
         <button
           onClick={() => setFilter(null)}
-          className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+          className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
             filter === null
-              ? 'bg-bloom text-base'
-              : 'glass-subtle text-text-muted hover:text-text'
+              ? 'bg-bloom text-base shadow-[0_0_12px_rgba(212,150,63,0.3)]'
+              : 'glass-subtle text-text-muted hover:text-text hover:border-bloom-dim/20'
           }`}
         >
           All
@@ -86,10 +85,10 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
           <button
             key={method.value}
             onClick={() => setFilter(method.value)}
-            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+            className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all ${
               filter === method.value
-                ? 'bg-bloom text-base'
-                : 'glass-subtle text-text-muted hover:text-text'
+                ? 'bg-bloom text-base shadow-[0_0_12px_rgba(212,150,63,0.3)]'
+                : 'glass-subtle text-text-muted hover:text-text hover:border-bloom-dim/20'
             }`}
           >
             {method.label}
@@ -97,18 +96,35 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
         ))}
       </div>
 
-      {posts.map(post => <PostCard key={post.id} post={post} userId={userId} />)}
+      {/* Posts — first one gets hero treatment */}
+      {posts.map((post, i) => (
+        <div
+          key={post.id}
+          className="card-in"
+          style={{ animationDelay: `${Math.min(i * 0.08, 0.4)}s` }}
+        >
+          <PostCard post={post} userId={userId} isHero={i === 0 && filter === null} />
+        </div>
+      ))}
 
       {posts.length === 0 && !isPending && (
-        <p className="text-center text-sm text-text-muted py-8">No {filter} posts yet.</p>
+        <div className="text-center py-12">
+          <p className="text-3xl mb-3">☕</p>
+          <p className="text-sm text-text-muted">No {filter} posts yet.</p>
+        </div>
       )}
 
-      <div ref={loaderRef} className="py-4 text-center">
+      <div ref={loaderRef} className="py-6 text-center">
         {isPending && (
-          <span className="text-xs text-text-muted">Loading...</span>
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-4 h-4 rounded-full border-2 border-bloom border-t-transparent animate-spin" />
+            <span className="text-xs text-text-muted">Loading...</span>
+          </div>
         )}
         {!cursor && posts.length > 0 && !isPending && (
-          <span className="text-xs text-text-dim">You&apos;re all caught up</span>
+          <p className="text-xs text-text-dim">
+            You&apos;re all caught up
+          </p>
         )}
       </div>
     </div>

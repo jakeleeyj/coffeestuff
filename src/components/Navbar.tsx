@@ -186,8 +186,7 @@ export default function Navbar() {
           {/* Center — New Post */}
           <Link href="/posts/new" className="flex flex-col items-center justify-center px-2">
             <span
-              className="w-12 h-12 rounded-full bg-bloom flex items-center justify-center"
-              style={{ boxShadow: '0 0 20px rgba(212, 150, 63, 0.4)' }}
+              className="w-12 h-12 rounded-full bg-bloom flex items-center justify-center glow-pulse"
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d0906" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M12 5v14M5 12h14" />

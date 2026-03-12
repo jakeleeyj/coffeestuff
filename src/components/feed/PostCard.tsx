@@ -11,51 +11,76 @@ import type { PostWithRelations } from '@/lib/types'
 function timeAgo(dateStr: string) {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
   if (seconds < 60) return 'just now'
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`
-  return `${Math.floor(seconds / 86400)}d ago`
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m`
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`
+  const days = Math.floor(seconds / 86400)
+  if (days < 7) return `${days}d`
+  return `${Math.floor(days / 7)}w`
 }
 
-export default function PostCard({ post, userId }: { post: PostWithRelations; userId?: string }) {
+export default function PostCard({ post, userId, isHero = false }: { post: PostWithRelations; userId?: string; isHero?: boolean }) {
   const username = post.profiles?.username ?? 'unknown'
   const beans = post.post_beans.map(pb => pb.beans).filter(Boolean)
   const isOwner = !!userId && userId === post.user_id
 
   return (
-    <article className="glass rounded-2xl overflow-hidden hover:border-bloom-dim/20 transition-all">
+    <article className="glass glass-hover rounded-2xl overflow-hidden">
+      {/* Author row — above image */}
+      <div className="flex items-center gap-2.5 px-4 py-3">
+        <Link href={`/profile/${username}`} className="flex items-center gap-2.5 flex-1 min-w-0">
+          <Avatar username={username} avatarUrl={post.profiles?.avatar_url} size="sm" />
+          <div className="min-w-0">
+            <span className="text-sm font-semibold text-text block truncate">{username}</span>
+          </div>
+        </Link>
+        <div className="flex items-center gap-2.5 shrink-0">
+          <span className="text-[11px] text-text-dim font-medium">{timeAgo(post.created_at)}</span>
+          {isOwner && <DeletePostButton postId={post.id} />}
+        </div>
+      </div>
+
+      {/* Image */}
       <DoubleTapLike postId={post.id} liked={post.liked_by_user ?? false}>
         <Link href={`/posts/${post.id}`}>
-          <div className="relative aspect-square img-shimmer">
+          <div className={`relative img-shimmer ${isHero ? 'aspect-[4/5]' : 'aspect-square'}`}>
             <Image
               src={post.image_url}
               alt={post.caption ?? 'Coffee post'}
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, 600px"
+              priority={isHero}
             />
           </div>
         </Link>
       </DoubleTapLike>
 
-      <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <LikeButton postId={post.id} likeCount={post.like_count ?? 0} liked={post.liked_by_user ?? false} />
-            <Link href={`/profile/${username}`} className="flex items-center gap-2">
-              <Avatar username={username} avatarUrl={post.profiles?.avatar_url} size="sm" />
-              <span className="text-sm font-medium text-text">{username}</span>
+      {/* Content */}
+      <div className="px-4 pt-3 pb-4 space-y-2.5">
+        {/* Actions row */}
+        <div className="flex items-center gap-1">
+          <LikeButton postId={post.id} likeCount={post.like_count ?? 0} liked={post.liked_by_user ?? false} />
+          <Link href={`/posts/${post.id}`} className="ml-1 text-text-muted hover:text-text transition-colors">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+            </svg>
+          </Link>
+          {(post.comment_count ?? 0) > 0 && (
+            <Link href={`/posts/${post.id}`} className="text-xs text-text-muted hover:text-text transition-colors">
+              {post.comment_count}
             </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            {isOwner && <DeletePostButton postId={post.id} />}
-            <span className="text-xs text-text-dim">{timeAgo(post.created_at)}</span>
-          </div>
+          )}
         </div>
 
+        {/* Caption */}
         {post.caption && (
-          <p className="text-sm text-text leading-relaxed line-clamp-2">{post.caption}</p>
+          <p className="text-[13px] text-text leading-relaxed">
+            <Link href={`/profile/${username}`} className="font-semibold hover:text-bloom transition-colors">{username}</Link>
+            {' '}<span className="text-text/85">{post.caption}</span>
+          </p>
         )}
 
+        {/* Tags */}
         {(post.brew_method || beans.length > 0) && (
           <div className="flex flex-wrap gap-1.5">
             {post.brew_method && <Badge label={post.brew_method} />}
@@ -67,14 +92,12 @@ export default function PostCard({ post, userId }: { post: PostWithRelations; us
           </div>
         )}
 
-        {/* Comments */}
-        <div className="flex items-center gap-3 pt-1">
-          <Link href={`/posts/${post.id}`} className="text-xs text-text-muted hover:text-text transition-colors">
-            {post.comment_count
-              ? `View ${post.comment_count === 1 ? '1 comment' : `all ${post.comment_count} comments`}`
-              : 'Add a comment...'}
+        {/* Comments link */}
+        {(post.comment_count ?? 0) > 1 && (
+          <Link href={`/posts/${post.id}`} className="block text-xs text-text-muted hover:text-text transition-colors">
+            View all {post.comment_count} comments
           </Link>
-        </div>
+        )}
 
         <FeedCommentInput postId={post.id} />
       </div>
