@@ -37,6 +37,9 @@ export async function createPost(formData: FormData) {
     caption: (formData.get('caption') as string) || null,
     brew_method: (formData.get('brew_method') as string) || null,
     recipe: (formData.get('recipe') as string) || null,
+    dose_grams: formData.get('dose_grams') ? Number(formData.get('dose_grams')) : null,
+    yield_grams: formData.get('yield_grams') ? Number(formData.get('yield_grams')) : null,
+    brew_time_seconds: formData.get('brew_time_seconds') ? Number(formData.get('brew_time_seconds')) : null,
   })
 
   if (postError) {

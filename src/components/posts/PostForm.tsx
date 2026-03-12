@@ -75,10 +75,23 @@ export default function PostForm({ beans }: { beans: Bean[] }) {
     setDragIdx(null)
   }
 
+  function parseTime(val: string): number | null {
+    if (!val.trim()) return null
+    const parts = val.split(':')
+    if (parts.length === 2) return (parseInt(parts[0]) || 0) * 60 + (parseInt(parts[1]) || 0)
+    const n = parseInt(val)
+    return isNaN(n) ? null : n
+  }
+
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (!croppedFile) return
     const formData = new FormData(e.currentTarget)
+    // Convert time display to seconds
+    const timeVal = formData.get('brew_time_display') as string
+    const seconds = parseTime(timeVal)
+    formData.set('brew_time_seconds', seconds != null ? String(seconds) : '')
+    formData.delete('brew_time_display')
     formData.set('image', croppedFile, 'photo.jpg')
     selectedBeans.forEach(id => formData.append('bean_ids', id))
     startTransition(async () => {
@@ -192,14 +205,36 @@ export default function PostForm({ beans }: { beans: Bean[] }) {
         </select>
       </div>
 
-      {/* Recipe */}
+      {/* Recipe — structured */}
       <div>
         <label className={labelCls}>Recipe <span className="text-text-dim normal-case">(optional)</span></label>
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <label className="block text-[10px] text-text-dim mb-1">Dose (g)</label>
+            <input name="dose_grams" type="number" step="0.1" min="0" placeholder="18" className={inputCls} />
+          </div>
+          <div>
+            <label className="block text-[10px] text-text-dim mb-1">Yield (g)</label>
+            <input name="yield_grams" type="number" step="0.1" min="0" placeholder="36" className={inputCls} />
+          </div>
+          <div>
+            <label className="block text-[10px] text-text-dim mb-1">Time</label>
+            <input
+              name="brew_time_display"
+              type="text"
+              inputMode="numeric"
+              placeholder="0:28"
+              pattern="[0-9]*:?[0-9]*"
+              className={inputCls}
+            />
+            <input name="brew_time_seconds" type="hidden" />
+          </div>
+        </div>
         <textarea
           name="recipe"
-          rows={4}
-          placeholder="Dose, ratio, water temp, grind size…"
-          className={`${inputCls} resize-none`}
+          rows={2}
+          placeholder="Extra notes — grind size, water temp…"
+          className={`${inputCls} resize-none mt-2`}
         />
       </div>
 

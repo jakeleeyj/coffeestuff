@@ -6,6 +6,9 @@ export type PostWithRelations = {
   created_at: string
   user_id?: string
   recipe?: string | null
+  dose_grams?: number | null
+  yield_grams?: number | null
+  brew_time_seconds?: number | null
   comment_count?: number
   like_count?: number
   liked_by_user?: boolean

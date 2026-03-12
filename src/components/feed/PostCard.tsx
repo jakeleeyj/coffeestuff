@@ -8,6 +8,25 @@ import LikeButton from '@/components/feed/LikeButton'
 import DoubleTapLike from '@/components/feed/DoubleTapLike'
 import type { PostWithRelations } from '@/lib/types'
 
+function formatRecipe(post: PostWithRelations) {
+  const parts: string[] = []
+  if (post.dose_grams) parts.push(`${post.dose_grams}g`)
+  if (post.yield_grams) parts.push(`${post.yield_grams}g`)
+  if (post.brew_time_seconds) {
+    const m = Math.floor(post.brew_time_seconds / 60)
+    const s = post.brew_time_seconds % 60
+    parts.push(m > 0 ? `${m}:${s.toString().padStart(2, '0')}` : `${s}s`)
+  }
+  if (parts.length === 0) return null
+  // Format: "18g → 36g · 0:28" or "18g · 3:45"
+  if (post.dose_grams && post.yield_grams) {
+    const dose = parts.shift()!
+    const yld = parts.shift()!
+    return [dose, '→', yld, ...parts.map(p => `· ${p}`)].join(' ')
+  }
+  return parts.join(' · ')
+}
+
 function timeAgo(dateStr: string) {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
   if (seconds < 60) return 'just now'
@@ -71,6 +90,17 @@ export default function PostCard({ post, userId, isHero = false }: { post: PostW
             </Link>
           )}
         </div>
+
+        {/* Recipe bar */}
+        {formatRecipe(post) && (
+          <div className="flex items-center gap-1.5 text-[11px] text-bloom/80 font-medium tracking-wide">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60">
+              <path d="M12 2v10l4.5 4.5" />
+              <circle cx="12" cy="12" r="10" />
+            </svg>
+            {formatRecipe(post)}
+          </div>
+        )}
 
         {/* Caption */}
         {post.caption && (

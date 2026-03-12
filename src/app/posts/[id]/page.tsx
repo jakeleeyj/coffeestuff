@@ -24,7 +24,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
 
   const [{ data: post }, { data: { user } }] = await Promise.all([
     supabase.from('posts')
-      .select('id, image_url, caption, brew_method, recipe, created_at, user_id')
+      .select('id, image_url, caption, brew_method, recipe, dose_grams, yield_grams, brew_time_seconds, created_at, user_id')
       .eq('id', id)
       .single(),
     supabase.auth.getUser(),
@@ -96,11 +96,37 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
             </div>
           )}
           {post.caption && <p className="text-sm text-text leading-relaxed">{post.caption}</p>}
+
+          {/* Structured recipe */}
+          {(post.dose_grams || post.yield_grams || post.brew_time_seconds) && (() => {
+            const parts: string[] = []
+            if (post.dose_grams) parts.push(`${post.dose_grams}g`)
+            if (post.yield_grams) parts.push(`${post.yield_grams}g`)
+            if (post.brew_time_seconds) {
+              const m = Math.floor(post.brew_time_seconds / 60)
+              const s = post.brew_time_seconds % 60
+              parts.push(m > 0 ? `${m}:${s.toString().padStart(2, '0')}` : `${s}s`)
+            }
+            let display = ''
+            if (post.dose_grams && post.yield_grams) {
+              const dose = parts.shift()!
+              const yld = parts.shift()!
+              display = [dose, '→', yld, ...parts.map(p => `· ${p}`)].join(' ')
+            } else {
+              display = parts.join(' · ')
+            }
+            return (
+              <div className="flex items-center gap-1.5 text-[11px] text-bloom/80 font-medium tracking-wide">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="opacity-60">
+                  <path d="M12 2v10l4.5 4.5" />
+                  <circle cx="12" cy="12" r="10" />
+                </svg>
+                {display}
+              </div>
+            )
+          })()}
           {post.recipe && (
-            <div>
-              <p className="text-xs font-medium text-text-muted uppercase tracking-wide mb-2">Recipe</p>
-              <p className="text-sm text-text-muted leading-relaxed whitespace-pre-wrap">{post.recipe}</p>
-            </div>
+            <p className="text-sm text-text-muted leading-relaxed whitespace-pre-wrap">{post.recipe}</p>
           )}
         </div>
       </div>

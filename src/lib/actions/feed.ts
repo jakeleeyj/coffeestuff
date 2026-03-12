@@ -11,7 +11,7 @@ export async function loadFeedPage(cursor?: string, brewMethod?: string): Promis
 
   let query = supabase
     .from('posts')
-    .select('id, image_url, caption, brew_method, created_at, user_id')
+    .select('id, image_url, caption, brew_method, dose_grams, yield_grams, brew_time_seconds, created_at, user_id')
     .order('created_at', { ascending: false })
     .limit(PAGE_SIZE)
 
