@@ -144,12 +144,12 @@ export default function Navbar() {
             <span className={`text-[10px] font-medium ${pathname.startsWith('/beans') ? 'text-bloom' : 'text-text-muted'}`}>Beans</span>
           </Link>
 
-          <Link href="/posts/new" className="flex flex-col items-center min-w-[60px] -mt-8">
+          <Link href="/posts/new" className="flex flex-col items-center justify-center min-w-[60px]">
             <span
-              className="w-14 h-14 rounded-full bg-bloom flex items-center justify-center border-4 border-base"
-              style={{ boxShadow: '0 0 24px rgba(212, 150, 63, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3)' }}
+              className="w-11 h-11 rounded-full bg-bloom flex items-center justify-center"
+              style={{ boxShadow: '0 0 20px rgba(212, 150, 63, 0.4)' }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0d0906" strokeWidth="2.5" strokeLinecap="round">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0d0906" strokeWidth="2.5" strokeLinecap="round">
                 <path d="M12 5v14M5 12h14" />
               </svg>
             </span>
