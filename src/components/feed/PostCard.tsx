@@ -62,7 +62,7 @@ export default function PostCard({ post, userId, isHero = false }: { post: PostW
       {/* Image */}
       <DoubleTapLike postId={post.id} liked={post.liked_by_user ?? false}>
         <Link href={`/posts/${post.id}`}>
-          <div className="relative img-shimmer aspect-square">
+          <div className="relative img-shimmer img-reveal aspect-square">
             <Image
               src={post.image_url}
               alt={post.caption ?? 'Coffee post'}
@@ -116,8 +116,8 @@ export default function PostCard({ post, userId, isHero = false }: { post: PostW
           <div className="flex flex-wrap gap-1.5">
             {post.brew_method && <Badge label={post.brew_method} />}
             {beans.map(bean => bean && (
-              <Link key={bean.id} href={`/beans/${bean.id}`} className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-raised text-text-muted border border-border hover:text-bloom hover:border-bloom-dim/30 transition-colors">
-                {bean.name}
+              <Link key={bean.id} href={`/beans/${bean.id}`} className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-raised text-text-muted border border-border hover:text-bloom hover:border-bloom-dim/30 tap-scale tag-glow transition-colors">
+                {bean.name}{bean.roaster ? ` — ${bean.roaster}` : ''}
               </Link>
             ))}
           </div>

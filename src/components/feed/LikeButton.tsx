@@ -1,6 +1,6 @@
 'use client'
 
-import { useOptimistic, useTransition } from 'react'
+import { useOptimistic, useTransition, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { toggleLike } from '@/lib/actions/interactions'
 
@@ -21,7 +21,15 @@ export default function LikeButton({ postId, likeCount, liked }: Props) {
     })
   )
 
+  const svgRef = useRef<SVGSVGElement>(null)
+
   function handleClick() {
+    // Trigger bounce animation
+    const el = svgRef.current
+    if (el) {
+      el.classList.remove('like-pop')
+      requestAnimationFrame(() => el.classList.add('like-pop'))
+    }
     startTransition(async () => {
       setOptimistic(optimistic)
       await toggleLike(postId)
@@ -36,6 +44,7 @@ export default function LikeButton({ postId, likeCount, liked }: Props) {
       className="flex items-center gap-1.5 group"
     >
       <svg
+        ref={svgRef}
         width="18"
         height="18"
         viewBox="0 0 24 24"

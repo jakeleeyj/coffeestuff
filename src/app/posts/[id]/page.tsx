@@ -35,7 +35,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   // Fetch profile, bean tags, comments, and likes separately
   const [{ data: profile }, { data: postBeans }, { data: comments }, { count: likeCount }, { data: userLike }] = await Promise.all([
     supabase.from('profiles').select('id, username, display_name, avatar_url').eq('id', post.user_id).single(),
-    supabase.from('post_beans').select('beans(id, name, roast_level)').eq('post_id', id),
+    supabase.from('post_beans').select('beans(id, name, roaster, roast_level)').eq('post_id', id),
     supabase.from('comments').select('id, body, created_at, user_id').eq('post_id', id).order('created_at', { ascending: true }),
     supabase.from('likes').select('*', { count: 'exact', head: true }).eq('post_id', id),
     user ? supabase.from('likes').select('post_id').eq('post_id', id).eq('user_id', user.id).maybeSingle() : { data: null },
@@ -51,7 +51,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
   const isOwner = user?.id === post.user_id
   const username = profile?.username ?? 'unknown'
   const displayName = profile?.display_name || username
-  const beans = (postBeans ?? []).map(pb => pb.beans as unknown as { id: string; name: string; roast_level: string | null } | null).filter(Boolean)
+  const beans = (postBeans ?? []).map(pb => pb.beans as unknown as { id: string; name: string; roaster: string | null; roast_level: string | null } | null).filter(Boolean)
   const deletePostWithId = deletePost.bind(null, post.id)
 
   return (
@@ -91,7 +91,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
               {post.brew_method && <Badge label={post.brew_method} />}
               {beans.map(bean => bean && (
                 <Link key={bean.id} href={`/beans/${bean.id}`} className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-raised text-text-muted border border-border hover:text-bloom hover:border-bloom-dim/30 transition-colors">
-                  {bean.name}
+                  {bean.name}{bean.roaster ? ` — ${bean.roaster}` : ''}
                 </Link>
               ))}
             </div>

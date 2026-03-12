@@ -31,7 +31,7 @@ export async function loadFeedPage(cursor?: string, brewMethod?: string): Promis
 
   const [{ data: profiles }, { data: postBeans }, { data: commentRows }, { data: likeRows }, { data: userLikes }] = await Promise.all([
     supabase.from('profiles').select('id, username, display_name, avatar_url').in('id', userIds),
-    supabase.from('post_beans').select('post_id, beans(id, name, roast_level)').in('post_id', postIds),
+    supabase.from('post_beans').select('post_id, beans(id, name, roaster, roast_level)').in('post_id', postIds),
     supabase.from('comments').select('post_id').in('post_id', postIds),
     supabase.from('likes').select('post_id').in('post_id', postIds),
     user
@@ -50,10 +50,10 @@ export async function loadFeedPage(cursor?: string, brewMethod?: string): Promis
   const userLikeSet = new Set((userLikes ?? []).map(l => l.post_id))
 
   const profileMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p]))
-  const beanMap: Record<string, { beans: { id: string; name: string; roast_level: string | null } | null }[]> = {}
+  const beanMap: Record<string, { beans: { id: string; name: string; roaster: string | null; roast_level: string | null } | null }[]> = {}
   for (const pb of postBeans ?? []) {
     if (!beanMap[pb.post_id]) beanMap[pb.post_id] = []
-    beanMap[pb.post_id].push({ beans: pb.beans as unknown as { id: string; name: string; roast_level: string | null } | null })
+    beanMap[pb.post_id].push({ beans: pb.beans as unknown as { id: string; name: string; roaster: string | null; roast_level: string | null } | null })
   }
 
   const enriched: PostWithRelations[] = posts.map(post => ({

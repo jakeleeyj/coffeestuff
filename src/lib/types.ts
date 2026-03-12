@@ -22,6 +22,7 @@ export type PostWithRelations = {
     beans: {
       id: string
       name: string
+      roaster: string | null
       roast_level: string | null
     } | null
   }[]

@@ -73,7 +73,7 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
       <div className="flex gap-1.5 overflow-x-auto scrollbar-none -mx-4 px-4">
         <button
           onClick={() => setFilter(null)}
-          className={`shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold transition-all ${
+          className={`shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold tap-scale transition-all ${
             filter === null
               ? 'bg-bloom text-base shadow-[0_0_12px_rgba(212,150,63,0.3)]'
               : 'glass-subtle text-text-muted hover:text-text hover:border-bloom-dim/20'
@@ -85,7 +85,7 @@ export default function FeedGrid({ initialPosts, initialCursor, userId }: Props)
           <button
             key={method.value}
             onClick={() => setFilter(method.value)}
-            className={`shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold transition-all ${
+            className={`shrink-0 px-3 py-1 rounded-full text-[11px] font-semibold tap-scale transition-all ${
               filter === method.value
                 ? 'bg-bloom text-base shadow-[0_0_12px_rgba(212,150,63,0.3)]'
                 : 'glass-subtle text-text-muted hover:text-text hover:border-bloom-dim/20'
