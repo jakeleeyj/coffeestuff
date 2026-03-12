@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'
 import DeletePostButton from '@/components/feed/DeletePostButton'
+import FeedCommentInput from '@/components/feed/FeedCommentInput'
 import type { PostWithRelations } from '@/lib/types'
 
 function timeAgo(dateStr: string) {
@@ -58,6 +59,17 @@ export default function PostCard({ post, userId }: { post: PostWithRelations; us
             ))}
           </div>
         )}
+
+        {/* Comments */}
+        <div className="flex items-center gap-3 pt-1">
+          <Link href={`/posts/${post.id}`} className="text-xs text-text-muted hover:text-text transition-colors">
+            {post.comment_count
+              ? `View ${post.comment_count === 1 ? '1 comment' : `all ${post.comment_count} comments`}`
+              : 'Add a comment...'}
+          </Link>
+        </div>
+
+        <FeedCommentInput postId={post.id} />
       </div>
     </article>
   )

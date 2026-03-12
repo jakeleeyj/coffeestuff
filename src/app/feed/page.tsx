@@ -46,6 +46,17 @@ export default async function FeedPage() {
     .select('post_id, beans(id, name, roast_level)')
     .in('post_id', postIds)
 
+  // Fetch comment counts
+  const { data: commentCounts } = await supabase
+    .from('comments')
+    .select('post_id')
+    .in('post_id', postIds)
+
+  const commentCountMap: Record<string, number> = {}
+  for (const c of commentCounts ?? []) {
+    commentCountMap[c.post_id] = (commentCountMap[c.post_id] ?? 0) + 1
+  }
+
   // Merge into PostWithRelations shape
   const profileMap = Object.fromEntries((profiles ?? []).map(p => [p.id, p]))
   const beanMap: Record<string, { beans: { id: string; name: string; roast_level: string | null } | null }[]> = {}
@@ -58,6 +69,7 @@ export default async function FeedPage() {
     ...post,
     profiles: profileMap[post.user_id] ?? null,
     post_beans: beanMap[post.id] ?? [],
+    comment_count: commentCountMap[post.id] ?? 0,
   }))
 
   return (
