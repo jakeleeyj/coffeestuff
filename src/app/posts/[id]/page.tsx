@@ -74,7 +74,7 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
       </div>
 
       <div className="glass rounded-2xl overflow-hidden">
-        <div className="relative aspect-square">
+        <div className="relative aspect-square img-shimmer">
           <Image
             src={post.image_url}
             alt={post.caption ?? 'Coffee post'}
@@ -92,9 +92,9 @@ export default async function PostPage({ params }: { params: Promise<{ id: strin
             <div className="flex flex-wrap gap-1.5">
               {post.brew_method && <Badge label={post.brew_method} />}
               {beans.map(bean => bean && (
-                <span key={bean.id} className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-raised text-text-muted border border-border">
+                <Link key={bean.id} href={`/beans/${bean.id}`} className="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium bg-surface-raised text-text-muted border border-border hover:text-bloom hover:border-bloom-dim/30 transition-colors">
                   {bean.name}
-                </span>
+                </Link>
               ))}
             </div>
           )}
