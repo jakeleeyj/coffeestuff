@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Avatar from '@/components/ui/Avatar'
-import { markNotificationsRead } from '@/lib/actions/interactions'
 
 function timeAgo(dateStr: string) {
   const seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000)
@@ -32,10 +31,10 @@ export default async function NotificationsPage() {
     : { data: [] }
   const actorMap = Object.fromEntries((actors ?? []).map(a => [a.id, a]))
 
-  // Mark all as read
+  // Mark all as read (direct update, no revalidation needed during render)
   const hasUnread = (notifications ?? []).some(n => !n.read)
   if (hasUnread) {
-    await markNotificationsRead()
+    await supabase.from('notifications').update({ read: true }).eq('user_id', user.id).eq('read', false)
   }
 
   return (
